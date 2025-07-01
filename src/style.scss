@@ -1,0 +1,132 @@
+@import './styles/variables';
+
+// * {
+//   margin: 0;
+//   padding: 0;
+//   box-sizing: border-box;
+// }
+
+body,
+html,
+#root {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: $background-color;
+}
+
+// Main container
+.trello-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+
+  //APP HEADER
+  .app-header {
+    background-color: $primary-color;
+    height: 48px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+
+    .app-header-logo {
+      // background-color: red;
+      width: 7%;
+      padding: 5px 8px;
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      cursor: pointer;
+
+      .app-header-logo-img {
+        width: 100%;
+      }
+
+      .app-header-logo-img:hover {
+        content: url("https://trello.com/assets/87e1af770a49ce8e84e3.gif");
+
+      }
+    }
+
+    .app-header-logo:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+  }
+
+  //BOARD HEADER
+  .board-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    background-color: $background-header-board-color;
+    color: white;
+
+
+    .board-title {
+      padding: 0px 10px;
+      border-radius: 5px;
+      // background-color: red;
+      height: 30px;
+      display: flex;
+      align-items: center;
+
+      h1 {
+        // background-color: blue;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+
+      }
+
+      input {
+        font-size: 18px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        font-weight: bold;
+      }
+
+      input:focus {
+        border: 3px solid $primary-color;
+        box-shadow: 0 0 0 3px rgb(5, 255, 167);
+      }
+    }
+
+    .board-title:focus-within {
+      padding: 0px;
+      /* khi input được focus */
+    }
+
+    .board-title-hover:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  //BOARD CONTENT
+  .board-content {
+    // flex: 1;
+    display: flex;
+    padding: 10px 20px;
+    gap: 15px;
+    overflow-x: auto;
+    overflow-y: hidden; // ✅ NGĂN scroll dọc toàn trang
+    align-items: flex-start;
+    width: 100%;
+    height: 100%;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    // box-sizing: border-box;
+  }
+}
+
+
+/* Toàn trang - chỉ khi đang kéo  - LỖI BÔI ĐEN KHI KÉO*/
+body.dragging {
+  user-select: none !important;
+}

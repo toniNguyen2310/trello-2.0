@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF" />
+    <title>Drag Cards & Columns (Trello style)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f2f5;
+            padding: 40px;
+        }
+
+        .board {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .column {
+            width: 300px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            min-height: 300px;
+            flex-shrink: 0;
+        }
+
+        .column-header {
+            font-weight: bold;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: #f4f4f4;
+            border-radius: 4px;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .card {
+            padding: 12px;
+            background: #e1ecf4;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: grab;
+        }
+
+        .dragging {
+            position: absolute !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .placeholder {
+            height: 48px;
+            background: #d3d3d3;
+            border: 2px dashed #aaa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .drag-ghost {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.8;
+            background: #e1ecf4;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .column-placeholder {
+            width: 300px;
+            height: 100%;
+            background: #ddd;
+            border: 2px dashed #aaa;
+            border-radius: 8px;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .column-ghost {
+            position: fixed;
+            width: 300px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        /* Ngăn bôi đen chữ khi kéo */
+        body.dragging-text-disable,
+        body.dragging-text-disable * {
+            user-select: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="board" id="board">
+        <div class="column">
+            <div class="column-header">To Do</div>
+            <div class="card">A1</div>
+            <div class="card">A2</div>
+        </div>
+
+        <div class="column">
+            <div class="column-header">In Progress</div>
+            <div class="card">B1</div>
+            <div class="card">B2</div>
+        </div>
+
+        <div class="column">
+            <div class="column-header">Done</div>
+            <div class="card">C1</div>
+            <div class="card">C2</div>
+        </div>
+    </div>
+
+    <script>
+        const board = document.getElementById("board");
+
+        // --- CARD DRAG ---
+        let draggingCard = null;
+        let ghost = null;
+        let cardPlaceholder = document.createElement("div");
+        cardPlaceholder.className = "placeholder";
+        let offsetX = 0, offsetY = 0;
+
+        document.addEventListener("mousedown", (e) => {
+            const card = e.target.closest(".card");
+            if (!card) return;
+
+            draggingCard = card;
+            const rect = card.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+
+            // Ngăn bôi đen chữ
+            document.body.classList.add("dragging-text-disable");
+
+            ghost = card.cloneNode(true);
+            ghost.className = "drag-ghost";
+            ghost.style.width = `${rect.width}px`;
+            ghost.style.left = `${e.clientX - offsetX}px`;
+            ghost.style.top = `${e.clientY - offsetY}px`;
+            document.body.appendChild(ghost);
+
+            card.classList.add("dragging");
+            card.parentNode.insertBefore(cardPlaceholder, card.nextSibling);
+
+            document.addEventListener("mousemove", onCardMouseMove);
+            document.addEventListener("mouseup", onCardMouseUp);
+        });
+
+        function onCardMouseMove(e) {
+            ghost.style.left = `${e.clientX - offsetX}px`;
+            ghost.style.top = `${e.clientY - offsetY}px`;
+
+            const allColumns = document.querySelectorAll(".column");
+            let currentColumn = null;
+
+            for (let col of allColumns) {
+                const rect = col.getBoundingClientRect();
+                if (
+                    e.clientX >= rect.left &&
+                    e.clientX <= rect.right &&
+                    e.clientY >= rect.top &&
+                    e.clientY <= rect.bottom
+                ) {
+                    currentColumn = col;
+                    break;
+                }
+            }
+
+            if (!currentColumn) return;
+
+            const cards = [...currentColumn.querySelectorAll(".card:not(.dragging)")];
+            let inserted = false;
+            for (let card of cards) {
+                const rect = card.getBoundingClientRect();
+                if (e.clientY < rect.top + rect.height / 2) {
+                    currentColumn.insertBefore(cardPlaceholder, card);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted) {
+                currentColumn.appendChild(cardPlaceholder);
+            }
+        }
+
+        function onCardMouseUp() {
+            if (cardPlaceholder && draggingCard) {
+                cardPlaceholder.parentNode.insertBefore(draggingCard, cardPlaceholder);
+            }
+
+            ghost?.remove();
+            cardPlaceholder?.remove();
+            draggingCard?.classList.remove("dragging");
+            document.body.classList.remove("dragging-text-disable");
+
+            ghost = null;
+            draggingCard = null;
+
+            document.removeEventListener("mousemove", onCardMouseMove);
+            document.removeEventListener("mouseup", onCardMouseUp);
+        }
+
+        // --- COLUMN DRAG ---
+        let draggingColumn = null;
+        let columnGhost = null;
+        let columnPlaceholder = document.createElement("div");
+        columnPlaceholder.className = "column-placeholder";
+
+        board.addEventListener("mousedown", (e) => {
+            const header = e.target.closest(".column-header");
+            if (!header) return;
+
+            draggingColumn = header.closest(".column");
+            const rect = draggingColumn.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+
+            document.body.classList.add("dragging-text-disable");
+
+            columnGhost = draggingColumn.cloneNode(true);
+            columnGhost.className = "column-ghost";
+            columnGhost.style.left = `${e.clientX - offsetX}px`;
+            columnGhost.style.top = `${e.clientY - offsetY}px`;
+            document.body.appendChild(columnGhost);
+
+            draggingColumn.classList.add("dragging");
+            board.insertBefore(columnPlaceholder, draggingColumn.nextSibling);
+
+            document.addEventListener("mousemove", onColumnMouseMove);
+            document.addEventListener("mouseup", onColumnMouseUp);
+        });
+
+        function onColumnMouseMove(e) {
+            columnGhost.style.left = `${e.clientX - offsetX}px`;
+            columnGhost.style.top = `${e.clientY - offsetY}px`;
+
+            const columns = [...board.querySelectorAll(".column:not(.dragging)")];
+            for (let col of columns) {
+                const rect = col.getBoundingClientRect();
+                if (e.clientX < rect.left + rect.width / 2) {
+                    board.insertBefore(columnPlaceholder, col);
+                    return;
+                }
+            }
+            board.appendChild(columnPlaceholder);
+        }
+
+        function onColumnMouseUp() {
+            if (columnPlaceholder && draggingColumn) {
+                board.insertBefore(draggingColumn, columnPlaceholder);
+            }
+
+            columnGhost?.remove();
+            columnPlaceholder?.remove();
+            draggingColumn?.classList.remove("dragging");
+            document.body.classList.remove("dragging-text-disable");
+
+            columnGhost = null;
+            draggingColumn = null;
+
+            document.removeEventListener("mousemove", onColumnMouseMove);
+            document.removeEventListener("mouseup", onColumnMouseUp);
+        }
+    </script>
+</body>
+
+</html>

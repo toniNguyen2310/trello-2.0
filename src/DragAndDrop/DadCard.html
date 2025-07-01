@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Drag between columns</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      gap: 40px;
+      padding: 40px;
+    }
+
+    .column {
+      width: 300px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+      min-height: 300px;
+    }
+
+    .card {
+      padding: 12px;
+      background: #e1ecf4;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      cursor: grab;
+    }
+
+    .dragging {
+      position: absolute !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .placeholder {
+      height: 48px;
+      background: #d3d3d3;
+      border: 2px dashed #aaa;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .drag-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.8;
+      background: #e1ecf4;
+      padding: 12px;
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="column" id="columnA">
+    <div class="card">A1</div>
+    <div class="card">A2</div>
+    <div class="card">A3</div>
+  </div>
+
+  <div class="column" id="columnB">
+    <div class="card">B1</div>
+    <div class="card">B2</div>
+  </div>
+
+  <script>
+    let draggingCard = null;
+    let ghost = null;
+    let placeholder = document.createElement("div");
+    placeholder.className = "placeholder";
+
+    let offsetX = 0, offsetY = 0;
+
+    document.addEventListener("mousedown", (e) => {
+      const target = e.target.closest(".card");
+      if (!target) return;
+
+      draggingCard = target;
+      const rect = target.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+
+      // Clone ghost
+      ghost = target.cloneNode(true);
+      ghost.className = "drag-ghost";
+      ghost.style.width = `${rect.width}px`;
+      ghost.style.left = `${e.clientX - offsetX}px`;
+      ghost.style.top = `${e.clientY - offsetY}px`;
+      document.body.appendChild(ghost);
+
+      // Add dragging style
+      draggingCard.classList.add("dragging");
+
+      // Insert placeholder after card (temporary)
+      draggingCard.parentNode.insertBefore(placeholder, draggingCard.nextSibling);
+
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    });
+
+    function onMouseMove(e) {
+      // Move ghost
+      ghost.style.left = `${e.clientX - offsetX}px`;
+      ghost.style.top = `${e.clientY - offsetY}px`;
+
+      // Find the column under the cursor
+      const allColumns = document.querySelectorAll(".column");
+      let currentColumn = null;
+
+      for (let col of allColumns) {
+        const rect = col.getBoundingClientRect();
+        if (
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        ) {
+          currentColumn = col;
+          break;
+        }
+      }
+
+      if (!currentColumn) return;
+
+      // Find insert position
+      const cards = [...currentColumn.querySelectorAll(".card:not(.dragging)")];
+      let inserted = false;
+      for (let card of cards) {
+        const rect = card.getBoundingClientRect();
+        if (e.clientY < rect.top + rect.height / 2) {
+          currentColumn.insertBefore(placeholder, card);
+          inserted = true;
+          break;
+        }
+      }
+
+      if (!inserted) {
+        currentColumn.appendChild(placeholder);
+      }
+    }
+
+    function onMouseUp() {
+      if (placeholder && draggingCard) {
+        placeholder.parentNode.insertBefore(draggingCard, placeholder);
+      }
+
+      if (ghost) ghost.remove();
+      if (placeholder) placeholder.remove();
+      if (draggingCard) draggingCard.classList.remove("dragging");
+
+      ghost = null;
+      draggingCard = null;
+
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    }
+  </script>
+</body>
+
+</html>
