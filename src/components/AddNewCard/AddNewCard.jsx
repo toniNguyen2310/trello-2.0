@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import './AddNewCard.scss'
 
-const AddNewCard = ({ onAddCard }) => {
+const AddNewCard = ({ column, onAddCard }) => {
   const [adding, setAdding] = useState(false)
   const [cardText, setCardText] = useState('')
   const wrapperRef = useRef(null)

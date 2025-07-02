@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, use } from 'react'
 import Column from '../Column/Column'
 import { initData, initData2, initDataBoard } from '../../utils/initColumnData'
 import AddNewColumn from '../AddNewColumn/AddNewColumn'
-import { sortOrder } from '../../utils/constants'
+import { createGhostCard, sortOrder } from '../../utils/constants'
 
 
 const BoardContent = () => {
@@ -23,6 +23,7 @@ const BoardContent = () => {
   let valueDragEndRef = useRef({
     targetCardId: null,
     targetColumnId: null,
+    isInsertEnd: false
   })
 
   // Add New Column
@@ -39,31 +40,31 @@ const BoardContent = () => {
       //LỖI BÔI ĐEN
       document.body.classList.add("dragging");
 
-      //Handle Ghost Move
+      //GHOST CARD
       const newX = e.pageX - distanceXFirst.current
       const newY = e.pageY - distanceYFirst.current
 
       if (cloneCardRef.current) {
         cloneCardRef.current.style.left = `${newX}px`
         cloneCardRef.current.style.top = `${newY}px`
-        // cloneCardRef.current.style.opacity = `0.8`
+        cloneCardRef.current.style.opacity = `0.8`
       }
-
-
       //Handle Placeholder Dragging
       const colEl = e.target.closest("[data-column-id]");
       const foundColumnId = colEl?.dataset.columnId
       const cardEl = e.target.closest("[data-card-id]");
       const foundCardId = cardEl?.dataset.cardId;
 
+
       // 🧠 Trường hợp 1: Hover vào 1 thẻ (có columnId và cardId)
       if (foundColumnId !== undefined && foundCardId !== undefined) {
-        const prev = valueDragEndRef.current;
         // Kiểm tra nếu vị trí mới khác vị trí cũ -> so sánh 2 vị trí gần nhất và hiện tại
+        const prev = valueDragEndRef.current;
         const isDifferent =
           !prev ||
           prev.targetColumnId !== foundColumnId ||
           prev.targetCardId !== foundCardId;
+
 
         if (isDifferent) {
           // ✅ Cập nhật ref
@@ -71,24 +72,20 @@ const BoardContent = () => {
             targetColumnId: foundColumnId,
             targetCardId: foundCardId
           };
-          // console.log("Vị trí mới:", valueDragEndRef.current)
-
           // ✅ Xoá tất cả .isCardDragging
           document.querySelectorAll(".isCardDragging").forEach((el) => {
             el.classList.remove("isCardDragging");
           });
           // ✅ Thêm class vào thẻ đích
-          const newTargetEl = document.querySelector(
+          const newCardTargetEl = document.querySelector(
             `[data-card-id="${foundCardId}"][ data-card-columnid="${foundColumnId}"]`
           );
 
-          if (newTargetEl) {
-            newTargetEl.classList.add("isCardDragging");
+          if (newCardTargetEl) {
+            newCardTargetEl.classList.add("isCardDragging");
           }
 
         }
-
-
       }
       // 🧠 Trường hợp 2: Hover vào cột rỗng
       else if (foundColumnId !== undefined && colEl?.querySelectorAll("[data-card-id]").length === 0) {
@@ -97,27 +94,83 @@ const BoardContent = () => {
           !prev ||
           prev.targetColumnId !== foundColumnId ||
           prev.targetCardId !== null;
+
         if (isDifferent) {
           valueDragEndRef.current = {
             targetColumnId: foundColumnId,
             targetCardId: null,
           };
 
-          // console.log("📌 Hover vào cột rỗng:", valueDragEndRef.current);
           // ✅ Xoá class placeholder nếu đang có
           document.querySelectorAll(".isCardDragging").forEach((el) => {
             el.classList.remove("isCardDragging");
           });
 
-          //BUG khi hover vào cột rỗng sẽ không biết thẻ nguồn, nên thêm css ở thẻ nguồn
         }
 
       }
       // 🧠 Trường hợp 3: Hover khoảng trống không thuộc thẻ/cột => bỏ qua
       else {
-        // Không làm gì
-      }
 
+        function getCardInColumnByPosition(columns, columnId, position = 'last') {
+          const column = columns.find(col => col.id === columnId);
+          if (!column || column.cardOrder.length === 0) return null;
+
+          const cardId = position === 'first'
+            ? column.cardOrder[0]
+            : column.cardOrder[column.cardOrder.length - 1];
+
+          const card = column.cards.find(card => card.id === cardId);
+          return card || null;
+        }
+
+        // Trường hợp 1: Hover in titile  or footer title
+        if (e.target.classList.contains('add-card')) {
+          let lastCard = getCardInColumnByPosition(listColumnsRef.current.columns, foundColumnId, 'last')
+
+          const cardEls = colEl?.querySelectorAll("[data-card-id]");
+          const isFirstCardSource = cardEls?.[0]?.getAttribute("data-card-id") === valueDragStartRef.current.sourceCardId;
+
+          if (valueDragStartRef.current.sourceColumnId === foundColumnId && cardEls.length === 1 || isFirstCardSource) {
+            //Cùng cột, cột 1 thẻ or thẻ đó là thẻ đầu tiên-> return
+            return
+          }
+          else {
+            // ✅ Xoá class placeholder nếu đang có
+            document.querySelectorAll(".isCardDragging").forEach((el) => {
+              el.classList.remove("isCardDragging");
+            });
+            console.log('2')
+            valueDragEndRef.current = {
+              targetColumnId: foundColumnId,
+              targetCardId: lastCard.id,
+              isInsertEnd: true
+            };
+          }
+        } else if (e.target.classList.contains('column-title-display')) {
+          let firstCard = getCardInColumnByPosition(listColumnsRef.current.columns, foundColumnId, 'first')
+
+          const cardEls = colEl?.querySelectorAll("[data-card-id]");
+          const isFirstCardSource = cardEls?.[0]?.getAttribute("data-card-id") === valueDragStartRef.current.sourceCardId;
+
+          if (valueDragStartRef.current.sourceColumnId === foundColumnId && cardEls.length === 1 || isFirstCardSource) {
+            //Cùng cột, cột 1 thẻ or thẻ đó là thẻ đầu tiên-> return
+            return
+          }
+          else {
+            // ✅ Xoá class placeholder nếu đang có
+            document.querySelectorAll(".isCardDragging").forEach((el) => {
+              el.classList.remove("isCardDragging");
+            });
+
+            valueDragEndRef.current = {
+              targetColumnId: foundColumnId,
+              targetCardId: firstCard.id,
+              isInsertEnd: false
+            };
+          }
+        }
+      }
     }
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -154,18 +207,6 @@ const BoardContent = () => {
       {/* <AddNewColumn onAddColumn={handleAddColumn} /> */}
     </div>
 
-
-    // <div className="board-content">
-    //   {boardData.columnOrder.map(id => (
-    //     <Column
-    //       key={id}
-    //       column={boardData.columns[id]}
-    //       onChangeColumnTitle={(newTitle) => handleChangeTitle(id, newTitle)}
-    //       onAddCard={(cardText) => handleAddCard(id, cardText)}
-    //     />
-    //   ))}
-    //   <AddNewColumn onAddColumn={handleAddColumn} />
-    // </div>
   )
 }
 

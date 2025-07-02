@@ -7,7 +7,7 @@ const Card = ({ card, valueDragStartRef, valueDragEndRef, cloneCardRef, distance
   const [cardTitle, setCardTitle] = useState(card.title)
   //Handle Edit Card
   const handleEditCard = () => {
-    console.log('CLICK')
+    // console.log('CLICK')
   }
   //Handle Mouse Down
   const handleMouseDown = (e) => {

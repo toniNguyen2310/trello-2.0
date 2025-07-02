@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 
 
-const ColumnTitle = ({ title, onChangeTitle }) => {
+const ColumnTitle = ({ column, title, onChangeTitle }) => {
 
 
   const [editing, setEditing] = useState(false)
@@ -50,7 +50,9 @@ const ColumnTitle = ({ title, onChangeTitle }) => {
   return (
     <div className="column-title-wrapper" ref={wrapperRef}>
       {!editing ? (
-        <div className="column-title-display" onClick={() => setEditing(true)}>
+        <div className="column-title-display"
+          onClick={() => setEditing(true)}
+        >
           {title}
         </div>
       ) : (

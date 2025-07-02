@@ -41,7 +41,7 @@ export function createGhostCard(card, mouseX, mouseY, dx, dy) {
     clone.style.left = `${mouseX - dx}px`
     clone.style.top = `${mouseY - dy}px`
     clone.style.pointerEvents = 'none'
-    clone.style.opacity = '0.8'
+    clone.style.opacity = '0'
     clone.style.zIndex = 1000
     clone.style.width = `${Number(card.offsetWidth - 23)}px` // optional: giữ đúng kích thước
     clone.style.height = `${card.offsetHeight}px - 6px`
@@ -66,10 +66,25 @@ export function resetDataDrag(valueDragStartRef, valueDragEndRef) {
     valueDragEndRef.current = {
         targetCardId: null,
         targetColumnId: null,
+        isInsertEnd: false
     }
     document.body.classList.remove("dragging");
     let cardDrag = document.querySelector(".isCardDragging");
     cardDrag && cardDrag.classList.remove("isCardDragging");
+}
+
+//UPDATE ColumnsRef Card
+export function updateColumnsInRef(current, newSourceCol, newTargetCol) {
+    const updatedIds = [newSourceCol?.id, newTargetCol?.id].filter(Boolean);
+
+    return {
+        ...current,
+        columns: current.columns.map(col => {
+            if (col.id === newSourceCol?.id) return newSourceCol;
+            if (col.id === newTargetCol?.id) return newTargetCol;
+            return col;
+        })
+    };
 }
 
 // import { useEffect } from "react";
