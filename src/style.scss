@@ -129,4 +129,6 @@ html,
 /* Toàn trang - chỉ khi đang kéo  - LỖI BÔI ĐEN KHI KÉO*/
 body.dragging {
   user-select: none !important;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }

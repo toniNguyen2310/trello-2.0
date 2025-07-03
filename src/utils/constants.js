@@ -32,19 +32,19 @@ export let placeholder = {
     cardIndex: null
 }
 
-//Create ghost card
-// createGhostCard.js
-export function createGhostCard(card, mouseX, mouseY, dx, dy) {
-    const clone = card.cloneNode(true)
+//Create ghost Card or Column
+export function createGhostCardOrColumn(element, mouseX, mouseY, dx, dy) {
+    const clone = element.cloneNode(true)
     clone.setAttribute('id', 'ghost-card')
     clone.style.position = 'absolute'
     clone.style.left = `${mouseX - dx}px`
     clone.style.top = `${mouseY - dy}px`
     clone.style.pointerEvents = 'none'
-    clone.style.opacity = '0'
+    clone.style.opacity = '0.8'
     clone.style.zIndex = 1000
-    clone.style.width = `${Number(card.offsetWidth - 23)}px` // optional: giữ đúng kích thước
-    clone.style.height = `${card.offsetHeight}px - 6px`
+    clone.style.width = `${Number(element.offsetWidth - 23)}px` // optional: giữ đúng kích thước thẻ
+    // clone.style.width = `${Number(card.offsetWidth)}px` // optional: giữ đúng kích thước cột
+    clone.style.height = `${element.offsetHeight}px - 6px`
 
     // 👇 Thêm hiệu ứng Trello-like:
     clone.style.transform = 'rotate(3deg) scale(1.05)'
@@ -71,6 +71,8 @@ export function resetDataDrag(valueDragStartRef, valueDragEndRef) {
     document.body.classList.remove("dragging");
     let cardDrag = document.querySelector(".isCardDragging");
     cardDrag && cardDrag.classList.remove("isCardDragging");
+    let columnDrag = document.querySelector(".isPlaceholderColumn");
+    columnDrag && columnDrag.classList.remove("isPlaceholderColumn");
 }
 
 //UPDATE ColumnsRef Card

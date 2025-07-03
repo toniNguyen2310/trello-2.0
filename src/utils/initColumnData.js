@@ -19,15 +19,15 @@ export const initDataBoard = {
             title: "cột 3",
             cardOrder: ['card5', 'card6'],
             cards: [
-                { id: 'card6', columnId: 'cột3', title: 'thẻ 6' },
-                { id: 'card5', columnId: 'cột3', title: 'thẻ 5' },
+                { id: 'card6', columnId: 'cột3', title: '6 6 6' },
+                { id: 'card5', columnId: 'cột3', title: '5    5     5' },
             ]
         }, {
             id: "cột2",
             title: "cột 2",
             cardOrder: ['card4',],
             cards: [
-                { id: 'card4', columnId: 'cột2', title: 'thẻ 4' },
+                { id: 'card4', columnId: 'cột2', title: '444' },
 
             ]
         }, {
@@ -35,9 +35,9 @@ export const initDataBoard = {
             title: "cột 1",
             cardOrder: ['card1', 'card2', 'card3'],
             cards: [
-                { id: 'card2', columnId: 'cột1', title: 'thẻ 2 - cột 1' },
-                { id: 'card3', columnId: 'cột1', title: 'thẻ 3 - cột 1' },
-                { id: 'card1', columnId: 'cột1', title: 'thẻ 1 - cột 1' },
+                { id: 'card2', columnId: 'cột1', title: '111111111' },
+                { id: 'card3', columnId: 'cột1', title: '3333' },
+                { id: 'card1', columnId: 'cột1', title: '2' },
             ]
         }, {
             id: "cột4",

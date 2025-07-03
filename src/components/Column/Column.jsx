@@ -3,7 +3,7 @@ import Card from '../Card/Card'
 import AddNewCard from '../AddNewCard/AddNewCard'
 import './Column.scss'
 import ColumnTitle from './ColumnTitle'
-import { resetDataDrag, sortOrder, updateColumnsInRef } from '../../utils/constants'
+import { createGhostCardOrColumn, resetDataDrag, sortOrder, updateColumnsInRef } from '../../utils/constants'
 
 
 const Column = ({
@@ -13,9 +13,10 @@ const Column = ({
   onChangeColumnTitle,
   valueDragEndRef,
   valueDragStartRef,
-  cloneCardRef,
+  cloneCarOrColumnRef,
   distanceXFirst,
-  distanceYFirst
+  distanceYFirst,
+
 }) => {
   const [column, setColumn] = useState(columnProps)
   const [cards, setCards] = useState(sortOrder(columnProps.cards, columnProps.cardOrder, 'id'))
@@ -47,7 +48,6 @@ const Column = ({
   //Handle MouseMoveCard
   const swapCard = (sourceCol, targetCol, sourceCardId, targetCardId, isInsertEnd) => {
     const isSameColumn = sourceCol.id === targetCol.id
-
     // === CASE 1: Cùng cột ===
     if (isSameColumn) {
       let newCol = {
@@ -125,7 +125,6 @@ const Column = ({
         newTargetCol.cards.unshift(updatedSourceCard);
 
       } else {
-        console.log('2targetCardId', targetCardId)
         // === CASE 2.2: Kéo sang cột khác có thẻ
         const targetIndex = newTargetCol.cardOrder.indexOf(targetCardId);
         if (targetIndex === -1) return [sourceCol, targetCol];
@@ -142,95 +141,134 @@ const Column = ({
     return [newSourceCol, newTargetCol];
   }
 
+  const handleMouseDownColumn = (e) => {
+    e.preventDefault();
+    const columnTarget = e.target.closest('[data-column-id]')
+    const rect = columnTarget.getBoundingClientRect()
+
+    // Lưu lại khoảng cách giữa chuột và Cột
+    distanceXFirst.current = e.clientX - rect.left
+    distanceYFirst.current = e.clientY - rect.top
+
+    //Clone Column Ghost
+    const cloneColumn = createGhostCardOrColumn(columnTarget, e.pageX, e.pageY, distanceXFirst.current, distanceYFirst.current)
+    cloneCarOrColumnRef.current = cloneColumn
+
+    let draggingColumn = {
+      sourceCardId: null,
+      sourceColumnId: column.id,
+      isDragging: true
+    }
+    valueDragStartRef.current = draggingColumn
+    // console.log(valueDragStartRef.current)
+  }
+
   //MOUSE UP
   useEffect(() => {
-    const handleMouseUp = ((e) => {
+    const handleMouseUpCard = ((e) => {
       e.preventDefault();
       const { sourceCardId, sourceColumnId, isDragging } = valueDragStartRef.current;
       const { targetCardId, targetColumnId, isInsertEnd } = valueDragEndRef.current;
 
-      //Check action Click
-      if (sourceCardId && sourceColumnId && !targetCardId & !targetColumnId) {
-        if (cloneCardRef.current) {
-          cloneCardRef.current.remove()
-          cloneCardRef.current = null
+      if (!isDragging) return //Không kéo thì bỏ qua
+
+      //KẾT THỨC CARD
+      if (sourceCardId) {
+        //Check action Click
+        if (sourceCardId && sourceColumnId && !targetCardId & !targetColumnId) {
+          if (cloneCarOrColumnRef.current) {
+            cloneCarOrColumnRef.current.remove()
+            cloneCarOrColumnRef.current = null
+          }
+          requestAnimationFrame(() => {
+            resetDataDrag(valueDragStartRef, valueDragEndRef);
+          });
+          return
         }
-        requestAnimationFrame(() => {
-          resetDataDrag(valueDragStartRef, valueDragEndRef);
-        });
-        return
+
+        //Chỉ cột nào thực hiện Dnd mới chạy vào/ Không thì return
+        if (column.id !== sourceColumnId && column.id !== targetColumnId) return;
+
+        if (!isDragging || !sourceCardId || !sourceColumnId || !targetColumnId) return
+        //Delete Ghost Card
+        if (cloneCarOrColumnRef.current) {
+          cloneCarOrColumnRef.current.remove()
+          cloneCarOrColumnRef.current = null
+        }
+
+        // TH1: Dnd cùng 1 vị trí -> Cùng cột, cùng thẻ -> không thay đổi -> chỉ reset 
+        if (sourceCardId === targetCardId && sourceColumnId === targetColumnId) {
+          // ✅ Delay Giữ ref cho tất cả Column dùng xong rồi mới reset
+          requestAnimationFrame(() => {
+            resetDataDrag(valueDragStartRef, valueDragEndRef);
+          });
+          return
+        }
+
+        const sourceCol = listColumnsRef.current.columns.find(col => col.id === sourceColumnId)
+        const targetCol = listColumnsRef.current.columns.find(col => col.id === targetColumnId)
+
+        if (!sourceCol || !targetCol) return
+
+        const [newSourceCol, newTargetCol] = swapCard(
+          sourceCol,
+          targetCol,
+          sourceCardId,
+          targetCardId,
+          isInsertEnd
+        );
+
+
+        const isSameCol = sourceCol.id === targetCol.id;
+        if (isSameCol) {
+          if (column.id === sourceCol.id) {
+            // console.log('cùng cột', newSourceCol)
+            setCards([...newSourceCol.cards]);
+            setColumn({ ...newSourceCol });
+            // resetDataDrag(valueDragStartRef, valueDragEndRef)
+
+
+          }
+        } else {
+          if (column.id === sourceCol.id) {
+            // console.log('1newSourceCol', newSourceCol)
+            // console.log('1newTargetCol', newTargetCol)
+            setCards([...newSourceCol.cards]);
+            setColumn({ ...newSourceCol });
+          }
+          if (column.id === targetCol.id) {
+            // console.log('2newSourceCol', newSourceCol)
+            // console.log('2newTargetCol', newTargetCol)
+            setCards([...newTargetCol.cards]);
+            setColumn({ ...newTargetCol });
+          }
+        }
+        console.log('CARD')
+      } else if (sourceColumnId) {
+        //KẾT THÚC COLUMN
+        // if (cloneCarOrColumnRef.current) {
+        //   cloneCarOrColumnRef.current.remove()
+        //   cloneCarOrColumnRef.current = null
+        // }
+
+        // console.log("Kết thúc kéo Column");
+
       }
 
-      //Chỉ cột nào thực hiện Dnd mới chạy vào/ Không thì return
-      if (column.id !== sourceColumnId && column.id !== targetColumnId) return;
-
-      if (!isDragging || !sourceCardId || !sourceColumnId || !targetColumnId) return
-      //Delete Ghost Card
-      if (cloneCardRef.current) {
-        cloneCardRef.current.remove()
-        cloneCardRef.current = null
-      }
-
-      // TH1: Dnd cùng 1 vị trí -> Cùng cột, cùng thẻ -> không thay đổi -> chỉ reset 
-      if (sourceCardId === targetCardId && sourceColumnId === targetColumnId) {
-        // ✅ Delay Giữ ref cho tất cả Column dùng xong rồi mới reset
-        requestAnimationFrame(() => {
-          resetDataDrag(valueDragStartRef, valueDragEndRef);
-        });
-        return
-      }
-
-      const sourceCol = listColumnsRef.current.columns.find(col => col.id === sourceColumnId)
-      const targetCol = listColumnsRef.current.columns.find(col => col.id === targetColumnId)
-
-      if (!sourceCol || !targetCol) return
-
-      const [newSourceCol, newTargetCol] = swapCard(
-        sourceCol,
-        targetCol,
-        sourceCardId,
-        targetCardId,
-        isInsertEnd
-      );
-
-
-      const isSameCol = sourceCol.id === targetCol.id;
-      if (isSameCol) {
-        if (column.id === sourceCol.id) {
-          // console.log('cùng cột', newSourceCol)
-          setCards([...newSourceCol.cards]);
-          setColumn({ ...newSourceCol });
-          resetDataDrag(valueDragStartRef, valueDragEndRef)
-        }
-      } else {
-        if (column.id === sourceCol.id) {
-          // console.log('1newSourceCol', newSourceCol)
-          // console.log('1newTargetCol', newTargetCol)
-          setCards([...newSourceCol.cards]);
-          setColumn({ ...newSourceCol });
-        }
-        if (column.id === targetCol.id) {
-          // console.log('2newSourceCol', newSourceCol)
-          // console.log('2newTargetCol', newTargetCol)
-          setCards([...newTargetCol.cards]);
-          setColumn({ ...newTargetCol });
-        }
-      }
       // ✅ Delay Giữ ref cho tất cả Column dùng xong rồi mới reset
       requestAnimationFrame(() => {
         resetDataDrag(valueDragStartRef, valueDragEndRef);
       });
-
     })
-    document.addEventListener("mouseup", handleMouseUp);
-    return () => document.removeEventListener("mousemove", handleMouseUp);
+    document.addEventListener("mouseup", handleMouseUpCard);
+    return () => document.removeEventListener("mousemove", handleMouseUpCard);
   }, [])
 
 
   return (
     <div className="column" data-column-id={column.id}>
       {/* Title Column */}
-      <ColumnTitle title={titleColumn} column={column} onChangeTitle={handleChangeTitle} />
+      <ColumnTitle title={titleColumn} column={column} onChangeTitle={handleChangeTitle} handleMouseDownColumn={handleMouseDownColumn} />
 
       {/* Content Column */}
       <div className="column-cards-wrapper" ref={cardsWrapperRef}>
@@ -242,7 +280,7 @@ const Column = ({
             valueDragEndRef={valueDragEndRef}
             distanceXFirst={distanceXFirst}
             distanceYFirst={distanceYFirst}
-            cloneCardRef={cloneCardRef}
+            cloneCarOrColumnRef={cloneCarOrColumnRef}
           />
         ))}
       </div>

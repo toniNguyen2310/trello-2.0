@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import './Card.scss'
-import { createGhostCard } from '../../utils/constants'
+import { createGhostCardOrColumn } from '../../utils/constants'
 
 
-const Card = ({ card, valueDragStartRef, valueDragEndRef, cloneCardRef, distanceYFirst, distanceXFirst }) => {
+const Card = ({ card, valueDragStartRef, valueDragEndRef, cloneCarOrColumnRef, distanceYFirst, distanceXFirst }) => {
   const [cardTitle, setCardTitle] = useState(card.title)
   //Handle Edit Card
   const handleEditCard = () => {
     // console.log('CLICK')
   }
   //Handle Mouse Down
-  const handleMouseDown = (e) => {
+  const handleMouseDownCard = (e) => {
     const cardTarget = e.target
     const rect = cardTarget.getBoundingClientRect()
 
@@ -18,8 +18,8 @@ const Card = ({ card, valueDragStartRef, valueDragEndRef, cloneCardRef, distance
     distanceXFirst.current = e.clientX - rect.left
     distanceYFirst.current = e.clientY - rect.top
     //Clone thẻ -> tạo ghost
-    const clone = createGhostCard(cardTarget, e.pageX, e.pageY, distanceXFirst.current, distanceYFirst.current)
-    cloneCardRef.current = clone
+    const clone = createGhostCardOrColumn(cardTarget, e.pageX, e.pageY, distanceXFirst.current, distanceYFirst.current)
+    cloneCarOrColumnRef.current = clone
 
     //lưu dragging
     let dragging = {
@@ -36,7 +36,7 @@ const Card = ({ card, valueDragStartRef, valueDragEndRef, cloneCardRef, distance
       className="card-item"
       data-card-id={card.id}
       data-card-columnid={card.columnId}
-      onMouseDown={handleMouseDown}
+      onMouseDown={handleMouseDownCard}
       onClick={() => handleEditCard()}
     >
       {cardTitle}

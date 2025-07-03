@@ -11,11 +11,13 @@
   flex-shrink: 0;
   max-height: calc(100vh - 140px);
 
+  // background-color: blue;
 
   //COLUMN TITLE 
   .column-title-wrapper {
     margin-bottom: 12px;
-
+    background-color: #29a07e;
+    border-radius: 5px;
 
     .column-title-display {
       font-weight: bold;
@@ -48,13 +50,6 @@
 
   }
 
-
-  // .column-title {
-  //   font-weight: bold;
-  //   font-size: 16px;
-  //   margin-bottom: 12px;
-  // }
-
   // ✅ KHỐI CHỨA THẺ CUỘN ĐƯỢC
   .column-cards-wrapper {
     flex: 1;
@@ -66,6 +61,7 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
     box-sizing: border-box;
+    // padding: 12px 8px;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -79,4 +75,9 @@
 
 
 
+}
+
+.isPlaceholderColumn {
+  background-color: #29a07e;
+  // color: black !important;
 }
