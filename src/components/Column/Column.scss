@@ -16,10 +16,10 @@
   //COLUMN TITLE 
   .column-title-wrapper {
     margin-bottom: 12px;
-    background-color: #29a07e;
     border-radius: 5px;
 
     .column-title-display {
+      // border: 1px solid;
       font-weight: bold;
       font-size: 16px;
       padding: 6px;
@@ -27,7 +27,6 @@
       word-break: break-word;
       text-align: left;
       border-radius: 4px;
-      border: 1px solid $column-bg;
       transition: background-color 0.2s;
       box-sizing: border-box;
     }
@@ -78,6 +77,21 @@
 }
 
 .isPlaceholderColumn {
-  background-color: #29a07e;
-  // color: black !important;
+  background-color: #000000 !important;
+  box-shadow: none;
+  color: #000000 !important;
+  opacity: 0.2;
+  will-change: opacity, background-color;
+  transition: none !important;
+
+
+  * {
+    color: transparent !important;
+    background-color: transparent !important;
+    pointer-events: none;
+    user-select: none;
+    box-shadow: none;
+    transition: none !important;
+    will-change: all;
+  }
 }

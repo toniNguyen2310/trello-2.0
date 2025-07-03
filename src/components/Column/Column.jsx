@@ -11,9 +11,9 @@ const Column = ({
   listColumnsRef,
   onAddCard,
   onChangeColumnTitle,
-  valueDragEndRef,
-  valueDragStartRef,
-  cloneCarOrColumnRef,
+  dragEndRef,
+  dragStartRef,
+  cloneElRef,
   distanceXFirst,
   distanceYFirst,
 
@@ -152,23 +152,22 @@ const Column = ({
 
     //Clone Column Ghost
     const cloneColumn = createGhostCardOrColumn(columnTarget, e.pageX, e.pageY, distanceXFirst.current, distanceYFirst.current)
-    cloneCarOrColumnRef.current = cloneColumn
+    cloneElRef.current = cloneColumn
 
     let draggingColumn = {
       sourceCardId: null,
       sourceColumnId: column.id,
       isDragging: true
     }
-    valueDragStartRef.current = draggingColumn
-    // console.log(valueDragStartRef.current)
+    dragStartRef.current = draggingColumn
   }
 
   //MOUSE UP
   useEffect(() => {
     const handleMouseUpCard = ((e) => {
       e.preventDefault();
-      const { sourceCardId, sourceColumnId, isDragging } = valueDragStartRef.current;
-      const { targetCardId, targetColumnId, isInsertEnd } = valueDragEndRef.current;
+      const { sourceCardId, sourceColumnId, isDragging } = dragStartRef.current;
+      const { targetCardId, targetColumnId, isInsertEnd } = dragEndRef.current;
 
       if (!isDragging) return //Không kéo thì bỏ qua
 
@@ -176,12 +175,12 @@ const Column = ({
       if (sourceCardId) {
         //Check action Click
         if (sourceCardId && sourceColumnId && !targetCardId & !targetColumnId) {
-          if (cloneCarOrColumnRef.current) {
-            cloneCarOrColumnRef.current.remove()
-            cloneCarOrColumnRef.current = null
+          if (cloneElRef.current) {
+            cloneElRef.current.remove()
+            cloneElRef.current = null
           }
           requestAnimationFrame(() => {
-            resetDataDrag(valueDragStartRef, valueDragEndRef);
+            resetDataDrag(dragStartRef, dragEndRef);
           });
           return
         }
@@ -191,16 +190,16 @@ const Column = ({
 
         if (!isDragging || !sourceCardId || !sourceColumnId || !targetColumnId) return
         //Delete Ghost Card
-        if (cloneCarOrColumnRef.current) {
-          cloneCarOrColumnRef.current.remove()
-          cloneCarOrColumnRef.current = null
+        if (cloneElRef.current) {
+          cloneElRef.current.remove()
+          cloneElRef.current = null
         }
 
         // TH1: Dnd cùng 1 vị trí -> Cùng cột, cùng thẻ -> không thay đổi -> chỉ reset 
         if (sourceCardId === targetCardId && sourceColumnId === targetColumnId) {
           // ✅ Delay Giữ ref cho tất cả Column dùng xong rồi mới reset
           requestAnimationFrame(() => {
-            resetDataDrag(valueDragStartRef, valueDragEndRef);
+            resetDataDrag(dragStartRef, dragEndRef);
           });
           return
         }
@@ -225,8 +224,6 @@ const Column = ({
             // console.log('cùng cột', newSourceCol)
             setCards([...newSourceCol.cards]);
             setColumn({ ...newSourceCol });
-            // resetDataDrag(valueDragStartRef, valueDragEndRef)
-
 
           }
         } else {
@@ -246,9 +243,9 @@ const Column = ({
         console.log('CARD')
       } else if (sourceColumnId) {
         //KẾT THÚC COLUMN
-        // if (cloneCarOrColumnRef.current) {
-        //   cloneCarOrColumnRef.current.remove()
-        //   cloneCarOrColumnRef.current = null
+        // if (cloneElRef .current) {
+        //   cloneElRef .current.remove()
+        //   cloneElRef .current = null
         // }
 
         // console.log("Kết thúc kéo Column");
@@ -257,7 +254,7 @@ const Column = ({
 
       // ✅ Delay Giữ ref cho tất cả Column dùng xong rồi mới reset
       requestAnimationFrame(() => {
-        resetDataDrag(valueDragStartRef, valueDragEndRef);
+        resetDataDrag(dragStartRef, dragEndRef);
       });
     })
     document.addEventListener("mouseup", handleMouseUpCard);
@@ -266,7 +263,7 @@ const Column = ({
 
 
   return (
-    <div className="column" data-column-id={column.id}>
+    <div className="column " data-column-id={column.id}>
       {/* Title Column */}
       <ColumnTitle title={titleColumn} column={column} onChangeTitle={handleChangeTitle} handleMouseDownColumn={handleMouseDownColumn} />
 
@@ -276,11 +273,11 @@ const Column = ({
           <Card
             key={card.id}
             card={card}
-            valueDragStartRef={valueDragStartRef}
-            valueDragEndRef={valueDragEndRef}
+            dragStartRef={dragStartRef}
+            dragEndRef={dragEndRef}
             distanceXFirst={distanceXFirst}
             distanceYFirst={distanceYFirst}
-            cloneCarOrColumnRef={cloneCarOrColumnRef}
+            cloneElRef={cloneElRef}
           />
         ))}
       </div>

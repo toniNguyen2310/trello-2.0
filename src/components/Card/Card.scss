@@ -73,6 +73,24 @@
   opacity: 0.8;
 }
 
-.isCardStart {
-  background-color: red;
+// .isCardStart {
+//   // background-color: red;
+// }
+
+
+.ghost-card {
+  position: absolute;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(194, 145, 83, 0.2));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: rotate(4deg);
+  /* nghiêng nhẹ */
+  opacity: 0;
+  pointer-events: none;
+  color: #333;
+  /* giữ chữ, hoặc dùng transparent nếu muốn ẩn */
+  user-select: none;
+  padding: 8px 12px;
 }

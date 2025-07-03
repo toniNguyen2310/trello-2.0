@@ -3,7 +3,7 @@ import './Card.scss'
 import { createGhostCardOrColumn } from '../../utils/constants'
 
 
-const Card = ({ card, valueDragStartRef, valueDragEndRef, cloneCarOrColumnRef, distanceYFirst, distanceXFirst }) => {
+const Card = ({ card, dragStartRef, dragEndRef, cloneElRef, distanceYFirst, distanceXFirst }) => {
   const [cardTitle, setCardTitle] = useState(card.title)
   //Handle Edit Card
   const handleEditCard = () => {
@@ -19,7 +19,7 @@ const Card = ({ card, valueDragStartRef, valueDragEndRef, cloneCarOrColumnRef, d
     distanceYFirst.current = e.clientY - rect.top
     //Clone thẻ -> tạo ghost
     const clone = createGhostCardOrColumn(cardTarget, e.pageX, e.pageY, distanceXFirst.current, distanceYFirst.current)
-    cloneCarOrColumnRef.current = clone
+    cloneElRef.current = clone
 
     //lưu dragging
     let dragging = {
@@ -29,7 +29,7 @@ const Card = ({ card, valueDragStartRef, valueDragEndRef, cloneCarOrColumnRef, d
     }
 
     //Save draggingStart
-    valueDragStartRef.current = dragging
+    dragStartRef.current = dragging
   }
   return (
     <div
