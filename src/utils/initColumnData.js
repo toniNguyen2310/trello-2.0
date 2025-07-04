@@ -1,15 +1,3 @@
-//initial data
-export const initData = [
-    { title: 'Việc cần làm nè', cards: ['Thẻ 1', 'Thẻ 2', 'thẻ 3', 'thẻ 4', 'thẻ 5', 'thẻ 6', 'thẻ 7', 'thẻ 8', 'thẻ 9', 'thẻ 10', 'thẻ 11'] },
-    { title: 'Đang làm', cards: ['Thẻ 3'] },
-
-]
-
-export const initData2 = {
-    columnOrder: [],
-    columns: {}
-}
-
 export const initDataBoard = {
     id: 'board-test',
     columnOrder: ['cột1', 'cột2', 'cột3', 'cột4'],
@@ -35,9 +23,9 @@ export const initDataBoard = {
             title: "cột 1",
             cardOrder: ['card1', 'card2', 'card3'],
             cards: [
-                { id: 'card2', columnId: 'cột1', title: '111111111' },
+                { id: 'card2', columnId: 'cột1', title: '2' },
                 { id: 'card3', columnId: 'cột1', title: '3333' },
-                { id: 'card1', columnId: 'cột1', title: '2' },
+                { id: 'card1', columnId: 'cột1', title: '1111' },
             ]
         }, {
             id: "cột4",

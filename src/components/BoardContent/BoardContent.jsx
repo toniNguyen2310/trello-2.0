@@ -11,7 +11,6 @@ const BoardContent = () => {
   const listColumnsRef = useRef({})
   const cloneElRef = useRef(null)
   const [distanceXFirst, distanceYFirst] = [useRef(0), useRef(0),];
-  //value dragging
   let dragStartRef = useRef({ sourceCardId: null, sourceColumnId: null, isDragging: false })
   let dragEndRef = useRef({ targetCardId: null, targetColumnId: null, isInsertEnd: false })
 
@@ -48,15 +47,14 @@ const BoardContent = () => {
 
       // Nếu chỉ click mà không kéo đi đâu
       if (!targetColumnId) {
-        resetDataDrag(dragStartRef, dragEndRef);
+        resetDataDrag(dragStartRef, dragEndRef, distanceXFirst, distanceYFirst);
         return
       }
 
       // Swap trong ref và cập nhật state
       swapColumnsInRef(listColumnsRef, sourceColumnId, targetColumnId)
       setColumns([...listColumnsRef.current.columns])
-      resetDataDrag(dragStartRef, dragEndRef);
-
+      resetDataDrag(dragStartRef, dragEndRef, distanceXFirst, distanceYFirst);
     }
 
     document.addEventListener("mouseup", handleMouseUpColumn);
@@ -64,8 +62,6 @@ const BoardContent = () => {
   }, [])
 
   // --- MOUSE MOVE: xử lý ghost + placeholder (column & card) ---
-
-
   useEffect(() => {
     const onMouseMove = (e) => {
       e.preventDefault();
@@ -100,13 +96,13 @@ const BoardContent = () => {
         return
       }
 
-      // drag card: 3 cases
+      // DRAG CARD: 3 cases
       // Case 1: hover on a card
       if (hoverColId && hoverCardId) {
         if (targetColumnId !== hoverColId || targetCardId !== hoverCardId) {
           dragEndRef.current = { targetColumnId: hoverColId, targetCardId: hoverCardId, isInsertEnd: false }
-          document.querySelectorAll('.isCardDragging').forEach(el => el.classList.remove('isCardDragging'))
-          cardEl.classList.add('isCardDragging')
+          document.querySelectorAll('.isPlaceholderCard').forEach(el => el.classList.remove('isPlaceholderCard'))
+          cardEl.classList.add('isPlaceholderCard')
         }
         return
       }
@@ -115,7 +111,7 @@ const BoardContent = () => {
       if (colEl && colEl.querySelectorAll('[data-card-id]').length === 0) {
         if (targetColumnId !== hoverColId || targetCardId !== null) {
           dragEndRef.current = { targetColumnId: hoverColId, targetCardId: null, isInsertEnd: true }
-          document.querySelectorAll('.isCardDragging').forEach(el => el.classList.remove('isCardDragging'))
+          document.querySelectorAll('.isPlaceholderCard').forEach(el => el.classList.remove('isPlaceholderCard'))
         }
         return
       }
@@ -127,19 +123,58 @@ const BoardContent = () => {
         const direction = isOnFooter ? 'last' : 'first'
         const column = listColumnsRef.current.columns.find(c => c.id === hoverColId)
         const cards = column?.cardOrder || []
+
         if (cards.length === 0) return
 
         const refCard = direction === 'last' ? cards[cards.length - 1] : cards[0]
-        const firstSource = colEl.querySelectorAll('[data-card-id]')?.[0]?.dataset.cardId === sourceCardId
-        if (sourceColumnId === hoverColId && (cards.length === 1 || firstSource)) return
 
-        const same = targetColumnId === hoverColId && targetCardId === refCard && isInsertEnd === (direction === 'last')
-        if (!same) {
-          document.querySelectorAll('.isCardDragging').forEach(el => el.classList.remove('isCardDragging'))
-          dragEndRef.current = { targetColumnId: hoverColId, targetCardId: refCard, isInsertEnd: direction === 'last' }
-          const refEl = colEl.querySelector(`[data-card-id="${refCard}"]`)
-          if (refEl) refEl.classList.add('isCardDragging')
+        const isFirstSource = colEl.querySelectorAll('[data-card-id]')?.[0]?.dataset.cardId === sourceCardId;
+        const isLastSource = colEl.querySelectorAll('[data-card-id]')?.[cards.length - 1]?.dataset.cardId === sourceCardId;
+
+        // 🎯 Tạo target tiếp theo để so sánh
+        const nextTarget = {
+          targetColumnId: hoverColId,
+          targetCardId: refCard,
+          isInsertEnd: direction === 'last'
+        };
+        const current = dragEndRef.current;
+        const isSameTarget =
+          current.targetColumnId === nextTarget.targetColumnId &&
+          current.targetCardId === nextTarget.targetCardId &&
+          current.isInsertEnd === nextTarget.isInsertEnd;
+
+        // ✅ Nếu giống target hiện tại -> bỏ qua không cập nhật lại DOM/class
+        if (isSameTarget) return;
+
+        document.querySelectorAll('.isPlaceholderCard').forEach(el => el.classList.remove('isPlaceholderCard'));
+        // ✅ Nếu hover vào TITLE và thẻ đang ở đầu hoặc cột chỉ có 1 thẻ => bỏ qua
+        if (isOnTitle && sourceColumnId === hoverColId && (cards.length === 1 || isFirstSource)) {
+          dragEndRef.current = {
+            targetColumnId: sourceColumnId,
+            targetCardId: sourceCardId,
+            isInsertEnd: false
+          };
+          const refEl = colEl.querySelector(`[data-card-id="${sourceCardId}"]`);
+          if (refEl) refEl.classList.add('isPlaceholderCard');
+          return;
         }
+
+        // ✅ Nếu hover vào FOOTER và thẻ đang ở cuối hoặc cột chỉ có 1 thẻ => bỏ qua
+        if (isOnFooter && sourceColumnId === hoverColId && (cards.length === 1 || isLastSource)) {
+          dragEndRef.current = {
+            targetColumnId: sourceColumnId,
+            targetCardId: sourceCardId,
+            isInsertEnd: false
+          };
+          const refEl = colEl.querySelector(`[data-card-id="${sourceCardId}"]`);
+          if (refEl) refEl.classList.add('isPlaceholderCard');
+          return;
+        }
+
+
+        dragEndRef.current = nextTarget
+        const refEl = colEl.querySelector(`[data-card-id="${refCard}"]`)
+        if (refEl) refEl.classList.add('isPlaceholderCard')
         return
       }
 
@@ -226,9 +261,9 @@ const BoardContent = () => {
   //           targetCardId: hoverCardId,
   //           isInsertEnd: false
   //         }
-  //         document.querySelectorAll('.isCardDragging')
-  //           .forEach(el => el.classList.remove('isCardDragging'))
-  //         cardEl.classList.add('isCardDragging')
+  //         document.querySelectorAll('.isPlaceholderCard')
+  //           .forEach(el => el.classList.remove('isPlaceholderCard'))
+  //         cardEl.classList.add('isPlaceholderCard')
   //       }
   //       return
   //     }
@@ -242,8 +277,8 @@ const BoardContent = () => {
   //           targetCardId: null,
   //           isInsertEnd: true
   //         };
-  //         document.querySelectorAll('.isCardDragging')
-  //           .forEach(el => el.classList.remove('isCardDragging'))
+  //         document.querySelectorAll('.isPlaceholderCard')
+  //           .forEach(el => el.classList.remove('isPlaceholderCard'))
   //       }
   //       return
   //     }
@@ -268,7 +303,7 @@ const BoardContent = () => {
   //         && dragEndRef.current.targetCardId === tgtCardId
   //         && dragEndRef.current.isInsertEnd === (direction === 'last')
   //       if (!isSameAsCurrent) {
-  //         document.querySelectorAll('.isCardDragging').forEach(el => el.classList.remove('isCardDragging'))
+  //         document.querySelectorAll('.isPlaceholderCard').forEach(el => el.classList.remove('isPlaceholderCard'))
   //         dragEndRef.current = {
   //           targetColumnId: hoverColId,
   //           targetCardId: tgtCardId,
@@ -276,7 +311,7 @@ const BoardContent = () => {
   //         }
   //         const tgtCardIdEl = colEl.querySelector(`[data-card-id="${tgtCardId}"]`)
   //         if (tgtCardIdEl) {
-  //           tgtCardIdEl.classList.add('isCardDragging')
+  //           tgtCardIdEl.classList.add('isPlaceholderCard')
   //         }
   //       }
   //       return

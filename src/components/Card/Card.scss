@@ -73,14 +73,18 @@
   opacity: 0.8;
 }
 
-// .isCardStart {
-//   // background-color: red;
-// }
+.isPlaceholderCard {
+  user-select: none !important;
+  background-color: rgb(228, 223, 223);
+  color: rgb(228, 223, 223);
+  opacity: 0.8;
+}
+
 
 
 .ghost-card {
   position: absolute;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(194, 145, 83, 0.2));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(251, 249, 247, 0.2));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 10px;

@@ -33,6 +33,13 @@ export let placeholder = {
 }
 
 
+//CloneColumn
+export const cloneColumn = (col) => ({
+    ...col,
+    cardOrder: [...col.cardOrder],
+    cards: [...col.cards]
+});
+
 //Create ghost Card or Column
 export function createGhostCardOrColumn(element, mouseX, mouseY, dx, dy) {
     const clone = element.cloneNode(true)
@@ -46,21 +53,14 @@ export function createGhostCardOrColumn(element, mouseX, mouseY, dx, dy) {
     // clone.style.opacity = '0.1'
     clone.style.zIndex = 1000
     clone.style.width = `${Number(element.offsetWidth - 23)}px` // optional: giữ đúng kích thước thẻ
-    // clone.style.width = `${Number(card.offsetWidth)}px` // optional: giữ đúng kích thước cột
     clone.style.height = `${element.offsetHeight}px - 6px`
-
-    // 👇 Thêm hiệu ứng Trello-like:
-    // clone.style.transform = 'rotate(4deg)'
-    // clone.style.boxShadow = 'inset 0px 0px 0px 2px#f1f2f4'
-    // clone.style.transition = 'transform 0.1s ease'
-
     document.body.appendChild(clone)
     return clone
 }
 
 
 //RESET 
-export function resetDataDrag(dragStartRef, dragEndRef) {
+export function resetDataDrag(dragStartRef, dragEndRef, distanceXFirst, distanceYFirst) {
     dragStartRef.current = {
         sourceCardId: null,
         sourceColumnId: null,
@@ -71,134 +71,33 @@ export function resetDataDrag(dragStartRef, dragEndRef) {
         targetColumnId: null,
         isInsertEnd: false
     }
+    if (distanceXFirst) distanceXFirst.current = 0;
+    if (distanceYFirst) distanceYFirst.current = 0;
+
     document.body.classList.remove("dragging");
-    let cardDrag = document.querySelector(".isCardDragging");
-    cardDrag && cardDrag.classList.remove("isCardDragging");
+    let cardDrag = document.querySelector(".isPlaceholderCard");
+    cardDrag && cardDrag.classList.remove("isPlaceholderCard");
     let columnDrag = document.querySelector(".isPlaceholderColumn");
     columnDrag && columnDrag.classList.remove("isPlaceholderColumn");
 }
 
 //UPDATE ColumnsRef Card
-export function updateColumnsInRef(current, newSourceCol, newTargetCol) {
-    const updatedIds = [newSourceCol?.id, newTargetCol?.id].filter(Boolean);
+export function updateColumnsInRef(current, newSourceCol, newTargetCol = null) {
+    const updatedColumns = current.columns.map(col => {
+        // Trường hợp chỉ truyền 2 tham số → chỉ cập nhật newSourceCol
+        if (!newTargetCol) {
+            return col.id === newSourceCol?.id ? newSourceCol : col;
+        }
+        // Trường hợp truyền cả 3 tham số
+        if (col.id === newSourceCol?.id) return newSourceCol;
+        if (col.id === newTargetCol?.id && newTargetCol?.id !== newSourceCol?.id) return newTargetCol;
+
+        return col;
+    });
 
     return {
         ...current,
-        columns: current.columns.map(col => {
-            if (col.id === newSourceCol?.id) return newSourceCol;
-            if (col.id === newTargetCol?.id) return newTargetCol;
-            return col;
-        })
+        columns: updatedColumns
     };
 }
 
-// import { useEffect } from "react";
-// import { debounce } from "lodash";
-
-// export const useColumnDragDrop = ({
-//     column,
-//     setColumn,
-//     setCards,
-//     listColumns,
-//     cloneColumnDrag,
-//     cloneColumnDragX,
-//     cloneColumnDragY,
-//     cloneCardDrag,
-//     cloneCardDragX,
-//     cloneCardDragY,
-//     columnEmpty,
-//     objColEmpty,
-//     objColStart,
-//     objColEnter,
-//     cardStart,
-//     cardEnter,
-//     clickMouseY,
-//     dropMouseY
-// }) => {
-//     useEffect(() => {
-//         const handleMouseDown = (e) => {
-//             clickMouseY.current = e.clientY;
-//             dropMouseY.current = e.clientY;
-//             if (e.target.classList[0] !== "form-control") {
-//                 // handled externally
-//             }
-//             const clone = cloneColumnDrag.current || cloneCardDrag.current;
-//             if (clone) document.body.appendChild(clone);
-//         };
-
-//         const handleDragStart = () => {
-//             const node = cloneColumnDrag.current || cloneCardDrag.current;
-//             if (node) {
-//                 node.classList.add("dragged-item");
-//                 document.body.appendChild(node);
-//             }
-//         };
-
-//         const handleDragOver = (e) => {
-//             e.preventDefault();
-//             dropMouseY.current = e.clientY;
-//             const isColumn = !!cloneColumnDrag.current;
-//             const x = e.pageX - (isColumn ? 170 : 130);
-//             const y = isColumn ? e.pageY : e.pageY + 10;
-//             const clone = isColumn ? cloneColumnDrag.current : cloneCardDrag.current;
-//             if (clone) {
-//                 clone.style.left = `${x}px`;
-//                 clone.style.top = `${y}px`;
-//             }
-//         };
-
-//         const handleDragEnd = debounce((e) => {
-//             e.target.classList.remove("is-card-dragging");
-
-//             const updateIfMatched = (ref) => {
-//                 if (ref?.id === column?.id) {
-//                     setColumn({ ...ref });
-//                     setCards([...ref.cards]);
-//                 }
-//             };
-
-//             if (
-//                 (objColEnter.current?.id === objColStart.current?.id) ||
-//                 columnEmpty.current
-//             ) {
-//                 updateIfMatched(objColEnter.current);
-//                 if (columnEmpty.current?.id === column.id) {
-//                     updateIfMatched(objColEmpty.current);
-//                     columnEmpty.current = null;
-//                 }
-//             } else {
-//                 updateIfMatched(objColStart.current);
-//                 updateIfMatched(objColEnter.current);
-//             }
-
-//             setTimeout(() => {
-//                 columnEmpty.current = null;
-//                 objColStart.current = null;
-//                 objColEnter.current = null;
-//                 cardStart.current = null;
-//                 cardEnter.current = null;
-//                 cloneColumnDrag.current = null;
-//                 cloneCardDrag.current = null;
-//             }, 0);
-
-//             localStorage.setItem("listColumns", JSON.stringify(listColumns.current));
-//         }, 0);
-
-//         window.addEventListener("mousedown", handleMouseDown);
-//         window.addEventListener("dragstart", handleDragStart);
-//         window.addEventListener("dragover", handleDragOver);
-//         window.addEventListener("dragend", handleDragEnd);
-//         window.addEventListener("mouseup", (e) => {
-//             if (e.target.className === "board-content") {
-//                 // handle setShowAddCard(false) externally
-//             }
-//         });
-
-//         return () => {
-//             window.removeEventListener("mousedown", handleMouseDown);
-//             window.removeEventListener("dragstart", handleDragStart);
-//             window.removeEventListener("dragover", handleDragOver);
-//             window.removeEventListener("dragend", handleDragEnd);
-//         };
-//     }, [column]);
-// };
