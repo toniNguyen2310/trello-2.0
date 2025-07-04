@@ -26,6 +26,7 @@ const AddNewCard = ({ column, onAddCard }) => {
 
   const handleAdd = () => {
     const trimmed = cardText.trim()
+    return
     if (!trimmed) return
     onAddCard(trimmed)
     setCardText('')

@@ -37,7 +37,7 @@ const Card = ({ card, dragStartRef, dragEndRef, cloneElRef, distanceYFirst, dist
       data-card-id={card.id}
       data-card-columnid={card.columnId}
       onMouseDown={handleMouseDownCard}
-      onClick={() => handleEditCard()}
+    // onClick={() => handleEditCard()}
     >
       {cardTitle}
     </div>
