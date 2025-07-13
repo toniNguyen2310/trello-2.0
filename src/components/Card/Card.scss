@@ -2,15 +2,16 @@
 
 .card-item {
   background-color: $card-bg;
-  // border: 3px solid $card-bg;
-  border-radius: 8px;
-  padding: 6px 12px;
+  border-radius: 9px;
+  padding: 7px 12px;
   font-size: 14px;
   color: #172b4d;
-  box-shadow: 0 1px 1px rgba(9, 30, 66, 0.2), 0 0 1px rgba(9, 30, 66, 0.31);
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
   cursor: pointer;
   transition: border 0.3s ease;
   transition: background-color 0.3s;
+  // border: 1px solid #dbdbdd;
+  // background-color: red; 
 
   &:target,
   &:focus-within {
@@ -80,21 +81,35 @@
   opacity: 0.8;
 }
 
-
+.column.ghost-card {
+  background: linear-gradient(to bottom right,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.7) 40%,
+      rgba(255, 255, 255, 0.4) 70%,
+      rgba(255, 255, 255, 0.1) 100%);
+  border: transparent;
+}
 
 .ghost-card {
+  background: linear-gradient(to bottom right,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.7) 40%,
+      rgba(255, 255, 255, 0.4) 70%,
+      rgba(255, 255, 255, 0.1) 100%);
   position: absolute;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(251, 249, 247, 0.2));
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px);
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transform: rotate(4deg);
-  /* nghiêng nhẹ */
   opacity: 0;
   pointer-events: none;
-  color: #333;
-  /* giữ chữ, hoặc dùng transparent nếu muốn ẩn */
+  border: transparent;
   user-select: none;
   padding: 8px 12px;
+
+  * {
+    background-color: transparent !important;
+
+  }
 }

@@ -35,6 +35,20 @@ export const initDataBoard = {
         }
 
     ]
+}
 
 
+
+
+export const listBoard = {
+    board: { id: "b1", title: "Dự án A", columnOrder: ["c1", "c2"] },
+    columns: [
+        { id: "c1", title: "To Do", cardOrder: ["card1", "card2"] },
+        { id: "c2", title: "Doing", cardOrder: ["card3"] }
+    ],
+    cards: [
+        { id: "card1", title: "Task 1", columnId: "c1" },
+        { id: "card2", title: "Task 2", columnId: "c1" },
+        { id: "card3", title: "Task 3", columnId: "c2" }
+    ]
 }

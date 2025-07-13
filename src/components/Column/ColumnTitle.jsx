@@ -1,5 +1,6 @@
 // ColumnTitle.jsx
 import React, { useState, useRef, useEffect } from 'react'
+import { IoIosMore } from "react-icons/io";
 
 
 const ColumnTitle = ({ column, title, onChangeTitle, handleMouseDownColumn }) => {
@@ -68,9 +69,12 @@ const ColumnTitle = ({ column, title, onChangeTitle, handleMouseDownColumn }) =>
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && confirmChange()}
           onBlur={confirmChange}
+          spellCheck={false}
         />
       )}
+      <div className="delete-column-btn"><IoIosMore /></div>
     </div>
+
   )
 }
 

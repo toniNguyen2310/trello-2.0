@@ -4,48 +4,81 @@
   display: flex;
   flex-direction: column;
   width: 255px;
-  padding: 12px 8px;
+  padding: 6px 8px 8px;
   background-color: $column-bg;
+
+
   border-radius: $border-radius;
   box-shadow: $shadow;
   flex-shrink: 0;
   max-height: calc(100vh - 140px);
-
-  // background-color: blue;
+  border: 2px solid $column-bg;
+  transition: border 0.2s ease;
+  gap: 12px;
 
   //COLUMN TITLE 
   .column-title-wrapper {
-    margin-bottom: 12px;
     border-radius: 5px;
+    height: 40px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    // background-color: blue;
+    font-weight: bold;
+    overflow: hidden;
+    gap: 1px;
+    // padding-top: 10px;
 
     .column-title-display {
-      // border: 1px solid;
-      font-weight: bold;
-      font-size: 16px;
-      padding: 6px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
       cursor: pointer;
-      word-break: break-word;
-      text-align: left;
-      border-radius: 4px;
-      transition: background-color 0.2s;
-      box-sizing: border-box;
+      font-family: inherit;
+      padding: 8px 8px;
+      // background-color: red;
     }
 
     .column-title-input {
-      font-weight: bold;
       font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
       width: 100%;
-      min-height: 36px;
-      padding: 9px 6px;
-      border: 1px solid #399151;
-      border-radius: 4px;
+      height: 100%;
+      border-radius: 5px;
       box-sizing: border-box;
+      overflow: hidden;
       outline: none;
-      display: block;
-      background-color: #fff;
+      padding: 0px 8px;
+      line-height: 32px;
+      margin: 0;
+      border: none;
+      box-shadow: none;
+      transition: box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
 
     }
 
+    .column-title-input:focus {
+      box-shadow: inset 0 0 0 2px #0079bf;
+    }
+
+    .delete-column-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      border-radius: 9px;
+    }
+
+    .delete-column-btn:hover {
+      cursor: pointer;
+      background-color: rgb(228, 223, 223);
+    }
 
   }
 
@@ -60,7 +93,9 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
     box-sizing: border-box;
-    // padding: 12px 8px;
+    width: 100%;
+    // background-color: blue;
+    padding: 2px;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -83,6 +118,7 @@
   opacity: 0.2;
   will-change: opacity, background-color;
   transition: none !important;
+  border: 2px solid transparent !important;
 
 
   * {
@@ -93,5 +129,10 @@
     box-shadow: none;
     transition: none !important;
     will-change: all;
+    border: 1px solid transparent !important;
   }
+}
+
+.isPlaceholderColumnBorder {
+  border: 2px solid #4a91f6;
 }

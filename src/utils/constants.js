@@ -45,12 +45,10 @@ export function createGhostCardOrColumn(element, mouseX, mouseY, dx, dy) {
     const clone = element.cloneNode(true)
     clone.setAttribute('id', 'ghost-card')
     clone.classList.add('ghost-card');
-
     clone.style.position = 'absolute'
     clone.style.left = `${mouseX - dx}px`
     clone.style.top = `${mouseY - dy}px`
     clone.style.pointerEvents = 'none'
-    // clone.style.opacity = '0.1'
     clone.style.zIndex = 1000
     clone.style.width = `${Number(element.offsetWidth - 23)}px` // optional: giữ đúng kích thước thẻ
     clone.style.height = `${element.offsetHeight}px - 6px`
@@ -77,6 +75,10 @@ export function resetDataDrag(dragStartRef, dragEndRef, distanceXFirst, distance
     document.body.classList.remove("dragging");
     let cardDrag = document.querySelector(".isPlaceholderCard");
     cardDrag && cardDrag.classList.remove("isPlaceholderCard");
+    let placeholderColumnBorder = document.querySelector(".isPlaceholderColumnBorder");
+    placeholderColumnBorder && placeholderColumnBorder.classList.remove("isPlaceholderColumnBorder");
+    let ghostCard = document.getElementById("ghost-card")
+    ghostCard && ghostCard.remove()
     let columnDrag = document.querySelector(".isPlaceholderColumn");
     columnDrag && columnDrag.classList.remove("isPlaceholderColumn");
 }

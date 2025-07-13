@@ -78,7 +78,7 @@ const BoardContent = () => {
       if (cloneElRef.current) {
         cloneElRef.current.style.left = e.pageX - distanceXFirst.current + 'px'
         cloneElRef.current.style.top = e.pageY - distanceYFirst.current + 'px'
-        cloneElRef.current.style.opacity = `0.6` //down hiện ghost ->  opacity = 0 
+        cloneElRef.current.style.opacity = `0.6`
       }
 
       const colEl = e.target.closest('[data-column-id]')
@@ -103,6 +103,10 @@ const BoardContent = () => {
           dragEndRef.current = { targetColumnId: hoverColId, targetCardId: hoverCardId, isInsertEnd: false }
           document.querySelectorAll('.isPlaceholderCard').forEach(el => el.classList.remove('isPlaceholderCard'))
           cardEl.classList.add('isPlaceholderCard')
+
+          //BORDER COLUMN WHEN HOVER
+          document.querySelectorAll('.isPlaceholderColumnBorder').forEach(el => el.classList.remove('isPlaceholderColumnBorder'))
+
         }
         return
       }
@@ -112,6 +116,8 @@ const BoardContent = () => {
         if (targetColumnId !== hoverColId || targetCardId !== null) {
           dragEndRef.current = { targetColumnId: hoverColId, targetCardId: null, isInsertEnd: true }
           document.querySelectorAll('.isPlaceholderCard').forEach(el => el.classList.remove('isPlaceholderCard'))
+          document.querySelectorAll('.isPlaceholderColumnBorder').forEach(el => el.classList.remove('isPlaceholderColumnBorder'))
+          colEl.classList.add('isPlaceholderColumnBorder')
         }
         return
       }
@@ -145,7 +151,7 @@ const BoardContent = () => {
 
         // ✅ Nếu giống target hiện tại -> bỏ qua không cập nhật lại DOM/class
         if (isSameTarget) return;
-
+        document.querySelectorAll('.isPlaceholderColumnBorder').forEach(el => el.classList.remove('isPlaceholderColumnBorder'))
         document.querySelectorAll('.isPlaceholderCard').forEach(el => el.classList.remove('isPlaceholderCard'));
         // ✅ Nếu hover vào TITLE và thẻ đang ở đầu hoặc cột chỉ có 1 thẻ => bỏ qua
         if (isOnTitle && sourceColumnId === hoverColId && (cards.length === 1 || isFirstSource)) {
@@ -184,146 +190,6 @@ const BoardContent = () => {
     document.addEventListener("mousemove", onMouseMove);
     return () => document.removeEventListener("mousemove", onMouseMove);
   }, [])
-
-
-  //Move Move Column
-  // useEffect(() => {
-  //   const handleMouseMoveColumn = (e) => {
-  //     e.preventDefault();
-  //     const { sourceCardId, sourceColumnId, isDragging } = dragStartRef.current;
-  //     if (!isDragging) return;
-  //     //LỖI BÔI ĐEN
-  //     document.body.classList.add("dragging");
-
-  //     // Di chuyển Ghost theo chuột
-  //     if (cloneElRef.current) {
-  //       cloneElRef.current.style.left = e.pageX - distanceXFirst.current + 'px'
-  //       cloneElRef.current.style.top = e.pageY - distanceYFirst.current + 'px'
-  //       cloneElRef.current.style.opacity = `0.8`
-  //     }
-
-  //     //Handle Placeholder Dragging
-  //     const colEl = e.target.closest("[data-column-id]");
-  //     const hoverColId = colEl?.dataset.columnId
-
-
-  //     if (!sourceCardId) {
-  //       //DRAG COLUMN: Just Hover Column
-  //       if (hoverColId && hoverColId !== dragEndRef.current.targetColumnId) {
-  //         dragEndRef.current.targetColumnId = hoverColId
-  //         // reset placeholder
-  //         document.querySelectorAll(".isPlaceholderColumn").forEach((el) => {
-  //           el.classList.remove("isPlaceholderColumn");
-  //         });
-  //         if (colEl) colEl.classList.add('isPlaceholderColumn')
-  //       }
-  //       return
-  //     }
-  //   }
-
-  //   //COLUMN
-  //   document.addEventListener("mousemove", handleMouseMoveColumn);
-  //   return () => document.removeEventListener("mousemove", handleMouseMoveColumn);
-
-  // }, [])
-
-  //Move Move Card
-  // useEffect(() => {
-  //   const handleMouseMoveCard = (e) => {
-  //     e.preventDefault();
-  //     const { sourceCardId, sourceColumnId, isDragging } = dragStartRef.current;
-  //     if (!isDragging) return;
-  //     //LỖI BÔI ĐEN
-  //     document.body.classList.add("dragging");
-
-  //     // Di chuyển Ghost theo chuột
-  //     if (cloneElRef.current) {
-  //       cloneElRef.current.style.left = e.pageX - distanceXFirst.current + 'px'
-  //       cloneElRef.current.style.top = e.pageY - distanceYFirst.current + 'px'
-  //       cloneElRef.current.style.opacity = `0.8`
-  //     }
-
-
-  //     //Handle Placeholder Dragging
-  //     const colEl = e.target.closest("[data-column-id]");
-  //     const cardEl = e.target.closest("[data-card-id]");
-  //     const hoverColId = colEl?.dataset.columnId
-  //     const hoverCardId = cardEl?.dataset.cardId;
-
-
-  //     // Case 1: Hover vào một thẻ
-  //     if (hoverColId && hoverCardId) {
-  //       if (dragEndRef.current.targetColumnId !== hoverColId
-  //         || dragEndRef.current.targetCardId !== hoverCardId) {
-  //         // Kiểm tra nếu vị trí mới khác vị trí cũ -> so sánh 2 vị trí gần nhất và hiện tại
-  //         dragEndRef.current = {
-  //           targetColumnId: hoverColId,
-  //           targetCardId: hoverCardId,
-  //           isInsertEnd: false
-  //         }
-  //         document.querySelectorAll('.isPlaceholderCard')
-  //           .forEach(el => el.classList.remove('isPlaceholderCard'))
-  //         cardEl.classList.add('isPlaceholderCard')
-  //       }
-  //       return
-  //     }
-
-  //     //Case 2: Hover vào cột rỗng
-  //     if (colEl && colEl.querySelectorAll('[data-card-id]').length === 0) {
-  //       if (dragEndRef.current.targetColumnId !== hoverColId
-  //         || dragEndRef.current.targetCardId !== null) {
-  //         dragEndRef.current = {
-  //           targetColumnId: hoverColId,
-  //           targetCardId: null,
-  //           isInsertEnd: true
-  //         };
-  //         document.querySelectorAll('.isPlaceholderCard')
-  //           .forEach(el => el.classList.remove('isPlaceholderCard'))
-  //       }
-  //       return
-  //     }
-
-  //     //Case 3 : Hover khoảng trống không thuộc (thẻ/cột) hoặc title/footer cột
-  //     const isOnFooterCol = e.target.classList.contains('add-card')
-  //     const isOnTitleCol = e.target.classList.contains('column-title-display')
-  //     if (colEl && (isOnFooterCol || isOnTitleCol)) {
-  //       const direction = isOnFooterCol ? 'last' : 'first'
-  //       const column = listColumnsRef.current.columns.find(c => c.id === hoverColId)
-  //       const cards = column?.cardOrder || []
-  //       // Nếu cột không có thẻ -> return
-  //       if (cards.length == 0) return
-
-  //       const tgtCardId = direction === 'last' ? cards[cards.length - 1] : cards[0]
-
-  //       const isFirstCardSource = colEl.querySelectorAll('[data-card-id]')?.[0]?.dataset.cardId === sourceCardId
-
-  //       //Cùng cột && (cột chỉ có 1 thẻ  || sourceCardId là thẻ đầu tiên trong cột) -> return
-  //       if (sourceColumnId === hoverColId && (cards.length === 1 || isFirstCardSource)) return
-  //       const isSameAsCurrent = dragEndRef.current.targetColumnId === hoverColId
-  //         && dragEndRef.current.targetCardId === tgtCardId
-  //         && dragEndRef.current.isInsertEnd === (direction === 'last')
-  //       if (!isSameAsCurrent) {
-  //         document.querySelectorAll('.isPlaceholderCard').forEach(el => el.classList.remove('isPlaceholderCard'))
-  //         dragEndRef.current = {
-  //           targetColumnId: hoverColId,
-  //           targetCardId: tgtCardId,
-  //           isInsertEnd: direction === 'last'
-  //         }
-  //         const tgtCardIdEl = colEl.querySelector(`[data-card-id="${tgtCardId}"]`)
-  //         if (tgtCardIdEl) {
-  //           tgtCardIdEl.classList.add('isPlaceholderCard')
-  //         }
-  //       }
-  //       return
-  //     }
-  //   }
-
-  //   document.addEventListener("mousemove", handleMouseMoveCard);
-  //   return () => document.removeEventListener("mousemove", handleMouseMoveCard)
-
-  // }, [])
-
-
 
 
 

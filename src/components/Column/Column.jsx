@@ -157,7 +157,6 @@ const Column = ({
       e.preventDefault();
       const { sourceCardId, sourceColumnId, isDragging } = dragStartRef.current;
       const { targetCardId, targetColumnId, isInsertEnd } = dragEndRef.current;
-
       if (!isDragging) return //Không kéo thì bỏ qua
 
       //Delete Ghost Card
