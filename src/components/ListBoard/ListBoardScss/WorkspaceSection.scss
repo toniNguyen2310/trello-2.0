@@ -1,0 +1,36 @@
+// src/components/WorkspaceSection.scss
+.workspace-section {
+    margin-bottom: 40px;
+}
+
+.workspace-title {
+    display: flex;
+    font-size: 18px;
+    color: black;
+    font-weight: bold;
+    padding: 10px 0px;
+    // background-color: red;
+}
+
+.workspace-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+
+    .workspace-avatar {
+        width: 32px;
+        height: 32px;
+        background-color: #dfe1e6;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    h3 {
+        font-size: 15px;
+        margin: 0;
+    }
+}

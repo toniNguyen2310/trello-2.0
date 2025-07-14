@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './AddNewCard.scss'
+import { ImCross } from "react-icons/im";
+import { FaPlus } from "react-icons/fa";
 
 const AddNewCard = ({ column, onAddCard }) => {
   const [adding, setAdding] = useState(false)
@@ -10,8 +12,8 @@ const AddNewCard = ({ column, onAddCard }) => {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        handleAdd()
         setAdding(false)
-        setCardText('')
       }
     }
 
@@ -22,12 +24,17 @@ const AddNewCard = ({ column, onAddCard }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [adding])
+  }, [adding, cardText])
+
 
   const handleAdd = () => {
     const trimmed = cardText.trim()
-    return
-    if (!trimmed) return
+
+    if (!trimmed) {
+      setCardText('')
+      setAdding(false)
+      return
+    }
     onAddCard(trimmed)
     setCardText('')
     setAdding(true)
@@ -37,8 +44,8 @@ const AddNewCard = ({ column, onAddCard }) => {
   return (
     <>
       {!adding ? (
-        <div className="add-card" onClick={() => setAdding(true)}>
-          + Thêm thẻ
+        <div className="add-card add-card-title" onClick={() => setAdding(true)}>
+          <FaPlus /> Thêm thẻ
         </div>
       ) : (
         <div className="add-card form" ref={wrapperRef}>
@@ -47,12 +54,14 @@ const AddNewCard = ({ column, onAddCard }) => {
             value={cardText}
             onChange={(e) => setCardText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-            placeholder="Nhập tiêu đề thẻ..."
+            placeholder="Enter a title..."
             autoFocus
           />
           <div className="actions">
-            <button onClick={handleAdd}>Thêm thẻ</button>
-            <button className="cancel" onClick={() => setAdding(false)}>Hủy</button>
+            <button onClick={handleAdd}>Add a card</button>
+            <button className="cancel" onClick={() => setAdding(false)}>
+              <ImCross />
+            </button>
           </div>
         </div>
       )}

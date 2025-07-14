@@ -4,10 +4,12 @@ import { initDataBoard } from '../../utils/initColumnData'
 import AddNewColumn from '../AddNewColumn/AddNewColumn'
 import { resetDataDrag, sortOrder } from '../../utils/constants'
 import { swapColumnsInRef } from '../../utils/swapColumnsInRef '
+import { v4 as uuidv4 } from 'uuid'
 
 
 const BoardContent = () => {
   const [columns, setColumns] = useState([])
+  const [board, setBoard] = useState({})
   const listColumnsRef = useRef({})
   const cloneElRef = useRef(null)
   const [distanceXFirst, distanceYFirst] = [useRef(0), useRef(0),];
@@ -17,16 +19,37 @@ const BoardContent = () => {
   // --- MOUNT: load data ---
   useEffect(() => {
     //Render dữ liệu API or LS
-    listColumnsRef.current = initDataBoard
-    setColumns(sortOrder(initDataBoard.columns, initDataBoard.columnOrder, "id"))
+    const savedBoard = localStorage.getItem('trelloBoard')
+    if (savedBoard) {
+      const parsedBoard = JSON.parse(savedBoard)
+      setBoard(parsedBoard)
+      listColumnsRef.current = parsedBoard
+      setColumns(sortOrder(parsedBoard.columns, parsedBoard.columnOrder, "id"))
+    } else {
+      // Nếu không có dữ liệu trong Local Storage, sử dụng initDataBoard
+      setBoard(initDataBoard)
+      listColumnsRef.current = initDataBoard
+      setColumns(sortOrder(initDataBoard.columns, initDataBoard.columnOrder, "id"))
+      // Lưu dữ liệu mặc định vào Local Storage
+      localStorage.setItem('trelloBoard', JSON.stringify(initDataBoard))
+    }
   }, [])
 
 
   // Add New Column
-  // const handleAddColumn = (title) => {
-  //   const newColumn = { title, cards: [] }
-  //   setColumns([...columns, newColumn])
-  // }
+  const handleAddColumn = (title) => {
+    const newColumn = {
+      id: "column-" + uuidv4(),
+      boardId: board.id,
+      title: title,
+      cardOrder: [],
+      cards: [],
+    }
+    setColumns([...columns, newColumn])
+    listColumnsRef.current.columnOrder.push(newColumn.id)
+    listColumnsRef.current.columns.push(newColumn)
+    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+  }
 
 
   // --- MOUSE UP: swap column nếu đang kéo column ---
@@ -35,7 +58,8 @@ const BoardContent = () => {
       e.preventDefault();
       const { sourceCardId, sourceColumnId, isDragging } = dragStartRef.current;
       const { targetColumnId } = dragEndRef.current;
-
+      console.log(dragStartRef.current)
+      console.log(dragEndRef.current)
       // Chỉ xử lý drag column, không phải card, và phải đang drag
       if (!isDragging || sourceCardId || !sourceColumnId) return;
 
@@ -46,7 +70,7 @@ const BoardContent = () => {
       }
 
       // Nếu chỉ click mà không kéo đi đâu
-      if (!targetColumnId) {
+      if (!targetColumnId || (sourceColumnId === targetColumnId)) {
         resetDataDrag(dragStartRef, dragEndRef, distanceXFirst, distanceYFirst);
         return
       }
@@ -54,6 +78,7 @@ const BoardContent = () => {
       // Swap trong ref và cập nhật state
       swapColumnsInRef(listColumnsRef, sourceColumnId, targetColumnId)
       setColumns([...listColumnsRef.current.columns])
+      localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
       resetDataDrag(dragStartRef, dragEndRef, distanceXFirst, distanceYFirst);
     }
 
@@ -210,7 +235,7 @@ const BoardContent = () => {
       ))}
 
       {/* button to create new column */}
-      {/* <AddNewColumn onAddColumn={handleAddColumn} /> */}
+      <AddNewColumn onAddColumn={handleAddColumn} />
     </div>
 
   )

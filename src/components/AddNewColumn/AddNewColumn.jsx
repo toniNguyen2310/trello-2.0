@@ -1,5 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import './AddNewColumn.scss'
+import { ImCross } from "react-icons/im";
+import { FaPlus } from "react-icons/fa";
 
 const AddNewColumn = ({ onAddColumn }) => {
   const [adding, setAdding] = useState(false)
@@ -37,8 +39,9 @@ const AddNewColumn = ({ onAddColumn }) => {
   return (
     <>
       {!adding ? (
-        <div className="add-column" onClick={() => setAdding(true)}>
-          + Thêm danh sách khác
+        <div className="add-column add-column-title" onClick={() => setAdding(true)}>
+          <FaPlus />
+          Thêm danh sách khác
         </div>
       ) : (
         <div className="add-column form" ref={wrapperRef}>
@@ -52,7 +55,7 @@ const AddNewColumn = ({ onAddColumn }) => {
           />
           <div className="actions">
             <button onClick={handleAdd}>Thêm danh sách</button>
-            <button className="cancel" onClick={() => { setAdding(false); setNewTitle('') }}>Hủy</button>
+            <button className="cancel" onClick={() => { setAdding(false); setNewTitle('') }}><ImCross /></button>
           </div>
         </div>
       )}

@@ -1,0 +1,72 @@
+// File: src/pages/Board.scss
+.guest-workspace {
+    margin-top: 32px;
+
+    .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #3b4a63;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 16px;
+
+        .info-icon {
+            font-size: 14px;
+        }
+    }
+
+    .workspace-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+
+        .workspace-avatar {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #7c4dff, #18a0fb);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .workspace-name {
+            font-size: 16px;
+            color: #1e1e1e;
+            font-weight: 500;
+        }
+    }
+
+    .board-card {
+        width: 220px;
+        border: 1px solid #d0d0d0;
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+
+        .board-thumbnail {
+            height: 90px;
+        }
+
+        .board-title {
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .guest-workspace {
+        .board-card {
+            width: 100%;
+        }
+    }
+}

@@ -1,8 +1,9 @@
 export const initDataBoard = {
-    id: 'board-test',
+    id: '1412',
     columnOrder: ['cột1', 'cột2', 'cột3', 'cột4'],
     columns: [
         {
+            boardId: '1412',
             id: "cột3",
             title: "cột 3",
             cardOrder: ['card5', 'card6'],
@@ -11,6 +12,7 @@ export const initDataBoard = {
                 { id: 'card5', columnId: 'cột3', title: '5    5     5' },
             ]
         }, {
+            boardId: '1412',
             id: "cột2",
             title: "cột 2",
             cardOrder: ['card4',],
@@ -19,6 +21,7 @@ export const initDataBoard = {
 
             ]
         }, {
+            boardId: '1412',
             id: "cột1",
             title: "cột 1",
             cardOrder: ['card1', 'card2', 'card3'],
@@ -28,6 +31,7 @@ export const initDataBoard = {
                 { id: 'card1', columnId: 'cột1', title: '1111' },
             ]
         }, {
+            boardId: '1412',
             id: "cột4",
             title: "cột rỗng",
             cardOrder: [],
@@ -52,3 +56,80 @@ export const listBoard = {
         { id: "card3", title: "Task 3", columnId: "c2" }
     ]
 }
+
+
+const data = {
+    id: 'board123',
+    title: 'Dự án Website Trello Clone',
+    color: ['#08479e', '#084293', '#0b4aa2'],
+    ownerId: 'userA',
+    members: [
+        {
+            id: 'userA',
+            name: 'Nguyễn Văn A',
+            email: 'a@example.com'
+        },
+        {
+            id: 'userB',
+            name: 'Trần Văn B',
+            email: 'b@example.com'
+        }
+    ],
+    columnOrder: ['col1', 'col2', 'col3'],
+    columns: [
+        {
+            id: 'col1',
+            title: 'Việc cần làm',
+            cardOrder: ['card1', 'card2'],
+            cards: [
+                {
+                    id: 'card1',
+                    columnId: 'col1',
+                    title: 'Thiết kế giao diện',
+                    description: 'Dùng Figma để thiết kế',
+                    status: false,
+                },
+                {
+                    id: 'card2',
+                    columnId: 'col1',
+                    title: 'Phân tích chức năng',
+                    description: '',
+                    status: true,
+                }
+            ]
+        },
+        {
+            id: 'col2',
+            title: 'Đang thực hiện',
+            cardOrder: [],
+            cards: []
+        },
+        {
+            id: 'col3',
+            title: 'Hoàn thành',
+            cardOrder: [],
+            cards: []
+        }
+    ]
+
+}
+
+// const newColumn = {
+//     id: "column-" + uuidv4(),        // tự generate tạm
+//     boardId: currentBoard.id,
+//     title: "Tên cột mới",
+//     cardOrder: [],
+//     cards: []
+// }
+// const newCard = {
+//     id: "card-" + uuidv4(),
+//     columnId: column.id,
+//     title: "Tên thẻ mới",
+//     description: "",
+//     labels: [],
+//     dueDate: null,
+//     attachments: [],
+//     comments: []
+// }
+
+

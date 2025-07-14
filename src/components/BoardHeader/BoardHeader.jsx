@@ -27,7 +27,7 @@ const BoardHeader = () => {
     }
   }, [editing, tempName])
   return (
-   <div className="board-header">
+    <div className="board-header">
       <div className="board-title board-title-hover" ref={wrapperRef}>
         {!editing ? (
           <h1 onClick={() => setEditing(true)}>{boardName}</h1>
@@ -41,16 +41,12 @@ const BoardHeader = () => {
                 setBoardName(tempName.trim() || boardName)
                 setEditing(false)
               }
-              if (e.key === 'Escape') {
-                setTempName(boardName)
-                setEditing(false)
-              }
             }}
             autoFocus
           />
         )}
       </div>
-   </div>
+    </div>
   )
 }
 

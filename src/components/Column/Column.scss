@@ -6,8 +6,6 @@
   width: 255px;
   padding: 6px 8px 8px;
   background-color: $column-bg;
-
-
   border-radius: $border-radius;
   box-shadow: $shadow;
   flex-shrink: 0;
@@ -19,15 +17,14 @@
   //COLUMN TITLE 
   .column-title-wrapper {
     border-radius: 5px;
-    height: 40px;
+    min-height: 40px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    // background-color: blue;
     font-weight: bold;
-    overflow: hidden;
+    // overflow: hidden;
     gap: 1px;
-    // padding-top: 10px;
+    // background-color: red;
 
     .column-title-display {
       font-weight: 600;
@@ -45,17 +42,18 @@
     }
 
     .column-title-input {
+      // margin: 0;
       font-size: 16px;
       font-weight: 600;
       font-family: inherit;
       width: 100%;
-      height: 100%;
+      // height: 100%;
       border-radius: 5px;
       box-sizing: border-box;
       overflow: hidden;
       outline: none;
       padding: 0px 8px;
-      line-height: 32px;
+      line-height: 40px;
       margin: 0;
       border: none;
       box-shadow: none;
@@ -64,7 +62,7 @@
     }
 
     .column-title-input:focus {
-      box-shadow: inset 0 0 0 2px #0079bf;
+      box-shadow: inset 0 0 0 2px $background-header-board-color;
     }
 
     .delete-column-btn {
@@ -88,14 +86,13 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     padding-right: 4px;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-    box-sizing: border-box;
     width: 100%;
-    // background-color: blue;
     padding: 2px;
+    box-sizing: border-box;
 
     &::-webkit-scrollbar {
       width: 5px;

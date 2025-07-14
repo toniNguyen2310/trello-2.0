@@ -1,0 +1,104 @@
+ @import '../../styles/variables';
+
+ .app-header {
+     display: flex;
+     align-items: center;
+     padding: 0 20px;
+     justify-content: space-between;
+     background-color: $primary-color;
+     min-height: 45px;
+     max-height: 45px;
+     // width: 100
+     position: sticky;
+     z-index: 1000;
+     box-sizing: border-box;
+
+     .app-header-logo {
+         // background-color: red;
+         width: 7%;
+         padding: 5px 3px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         border-radius: 5px;
+         cursor: pointer;
+
+         .app-header-logo-img {
+             width: 80%;
+         }
+
+         .app-header-logo-img:hover {
+             content: url("https://trello.com/assets/87e1af770a49ce8e84e3.gif");
+
+         }
+     }
+
+     .app-header-logo:hover {
+         background-color: rgba(255, 255, 255, 0.3);
+     }
+
+     .app-header-user {
+         display: flex;
+         color: #fff;
+         font-size: 28px;
+         cursor: pointer;
+         transition: color 0.3s ease, transform 0.2s ease;
+     }
+
+     .app-header-user:hover {
+         cursor: pointer;
+         transform: scale(1.1);
+     }
+
+     .app-header-authen {
+         position: relative;
+         width: 24px;
+         height: 24px;
+         line-height: 24px;
+         background-color: #5dc3eb;
+         border-radius: 50%;
+         padding: 2px;
+         font-weight: 600;
+         cursor: pointer;
+
+         .drop-down {
+             position: absolute;
+             top: 117%;
+             right: 0px;
+             background-color: #fcfcfc;
+             color: #000;
+             min-width: 150px;
+             width: 100%;
+             border-radius: 3px;
+             font-size: 14px;
+             display: flex;
+             flex-direction: column;
+             align-items: flex-start;
+             box-sizing: border-box;
+             box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+
+             .drop-down-box {
+                 border-radius: 4px;
+                 width: 100%;
+                 padding: 5px;
+                 padding-left: 10px;
+                 display: flex;
+                 align-items: center;
+                 gap: 10px;
+                 cursor: pointer;
+                 box-sizing: border-box;
+                 transition: background-color 0.5s ease;
+
+             }
+
+             .drop-down-box:hover {
+                 background-color: #cccccc;
+             }
+         }
+     }
+
+
+
+
+
+ }

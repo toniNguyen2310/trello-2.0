@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import './Card.scss'
 import { createGhostCardOrColumn } from '../../utils/constants'
+import { useNavigate } from 'react-router-dom';
 
 
 const Card = ({ card, dragStartRef, dragEndRef, cloneElRef, distanceYFirst, distanceXFirst }) => {
   const [cardTitle, setCardTitle] = useState(card.title)
+  const navigate = useNavigate();
+
   //Handle Edit Card
   const handleEditCard = () => {
     // console.log('CLICK')
@@ -37,7 +40,8 @@ const Card = ({ card, dragStartRef, dragEndRef, cloneElRef, distanceYFirst, dist
       data-card-id={card.id}
       data-card-columnid={card.columnId}
       onMouseDown={handleMouseDownCard}
-    // onClick={() => handleEditCard()}
+      onClick={() => navigate('/board/card')
+      }
     >
       {cardTitle}
     </div>

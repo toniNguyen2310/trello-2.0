@@ -3,11 +3,10 @@ import React, { useState, useRef, useEffect } from 'react'
 import { IoIosMore } from "react-icons/io";
 
 
-const ColumnTitle = ({ column, title, onChangeTitle, handleMouseDownColumn }) => {
-
+const ColumnTitle = ({ column, onChangeTitle, handleMouseDownColumn }) => {
 
   const [editing, setEditing] = useState(false)
-  const [newTitle, setNewTitle] = useState(title)
+  const [newTitle, setNewTitle] = useState(column.title)
   const inputRef = useRef(null)
   const wrapperRef = useRef(null)
 
@@ -16,10 +15,6 @@ const ColumnTitle = ({ column, title, onChangeTitle, handleMouseDownColumn }) =>
     if (editing) inputRef.current?.focus()
   }, [editing])
 
-  // Sync title when prop changes
-  useEffect(() => {
-    setNewTitle(title)
-  }, [title])
 
   // Confirm change when clicking outside
   useEffect(() => {
@@ -36,16 +31,15 @@ const ColumnTitle = ({ column, title, onChangeTitle, handleMouseDownColumn }) =>
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [editing])
+  }, [editing, newTitle])
 
   const confirmChange = () => {
     const trimmed = newTitle.trim()
-    if (trimmed && trimmed !== title) {
+    if (trimmed && trimmed !== column.title) {
       onChangeTitle(trimmed)
     }
     setEditing(false)
   }
-
 
 
   return (
@@ -59,7 +53,7 @@ const ColumnTitle = ({ column, title, onChangeTitle, handleMouseDownColumn }) =>
           }}
           onMouseDown={handleMouseDownColumn}
         >
-          {title}
+          {column.title}
         </div>
       ) : (
         <input

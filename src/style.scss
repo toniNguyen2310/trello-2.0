@@ -14,7 +14,7 @@ html,
   overflow: hidden;
   height: 100%;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  // background-color: black
+
 }
 
 // Main container
@@ -22,41 +22,8 @@ html,
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100vw;
+  // width: 100vh;
 
-  //APP HEADER
-  .app-header {
-    background-color: $primary-color;
-    height: 48px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-
-    .app-header-logo {
-      // background-color: red;
-      width: 7%;
-      padding: 5px 8px;
-      display: flex;
-      align-items: center;
-      border-radius: 5px;
-      cursor: pointer;
-
-      .app-header-logo-img {
-        width: 100%;
-      }
-
-      .app-header-logo-img:hover {
-        content: url("https://trello.com/assets/87e1af770a49ce8e84e3.gif");
-
-      }
-    }
-
-    .app-header-logo:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
-
-  }
 
   //BOARD HEADER
   .board-header {

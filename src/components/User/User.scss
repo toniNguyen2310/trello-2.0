@@ -1,0 +1,98 @@
+.User-container {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .User-container-modal {
+        background: #ffffff;
+        padding: 32px 40px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        animation: fadeInUp 0.3s ease;
+        font-family: 'Segoe UI', sans-serif;
+        color: #1d2129;
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #172b4d;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .user-info {
+            margin-bottom: 18px;
+            border-bottom: 1px solid #eee;
+
+            label {
+                display: block;
+                font-size: 13px;
+                color: #5e6c84;
+                margin-bottom: 4px;
+                font-weight: 500;
+            }
+
+            p {
+                font-size: 15px;
+                color: #172b4d;
+                margin: 0;
+                font-weight: 400;
+            }
+        }
+
+        .user-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+
+            .btn-secondary,
+            .btn-primary {
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                border: none;
+                transition: all 0.2s ease;
+            }
+
+            .btn-secondary {
+                background-color: #f4f5f7;
+                color: #333;
+
+                &:hover {
+                    background-color: #e1e2e6;
+                }
+            }
+
+            .btn-primary {
+                background-color: #0079bf;
+                color: #fff;
+
+                &:hover {
+                    background-color: #026aa7;
+                }
+            }
+        }
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

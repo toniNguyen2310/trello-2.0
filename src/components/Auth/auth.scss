@@ -1,0 +1,114 @@
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f4f4f4;
+}
+
+.form-box {
+    background: white;
+    padding: 40px;
+    width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px #ddd;
+
+    h1 {
+        margin: 0;
+        font-size: 32px;
+    }
+
+    .subtitle {
+        margin-top: 4px;
+        margin-bottom: 24px;
+        font-size: 16px;
+        color: #444;
+
+    }
+
+    .label {
+        display: block;
+        margin-bottom: 6px;
+        margin-top: 18px;
+        font-size: 14px;
+        color: #555;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    input[type='email'],
+    input[type='password'],
+    input[type='text'] {
+        width: 100%;
+        padding: 12px;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+        outline: none;
+        box-shadow: none;
+    }
+
+    input[type='email']:focus,
+    input[type='password']:focus,
+    input[type='text']:focus {
+        box-shadow: inset 0 0 0 2px #2579f5;
+    }
+
+    .password-field {
+        position: relative;
+
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            // transform: translateY(-50%); 
+            background: none;
+            border: none;
+            color: black;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 6px;
+        }
+    }
+
+    .main-button {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-top: 24px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #155fca;
+        }
+    }
+
+    .redirect {
+        font-size: 14px;
+        margin-top: 30px;
+        text-align: center;
+
+        a {
+            color: black;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .or-back {
+            margin-top: 6px;
+            font-size: 15px;
+
+            a {
+                color: #155fca;
+            }
+        }
+    }
+
+}

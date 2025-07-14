@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Card from '../Card/Card'
 import AddNewCard from '../AddNewCard/AddNewCard'
 import './Column.scss'
 import ColumnTitle from './ColumnTitle'
 import { cloneColumn, createGhostCardOrColumn, resetDataDrag, sortOrder, updateColumnsInRef } from '../../utils/constants'
-
+import { v4 as uuidv4 } from 'uuid'
 
 const Column = ({
   columnProps,
@@ -20,13 +20,13 @@ const Column = ({
 }) => {
   const [column, setColumn] = useState(columnProps)
   const [cards, setCards] = useState(sortOrder(columnProps.cards, columnProps.cardOrder, 'id'))
-  const [titleColumn, setTitleColumn] = useState(columnProps.title)
   const cardsWrapperRef = useRef(null)
 
   //Handle Add New Card
   const handleAddCard = (cardText) => {
+    let newCard = { id: 'card' + uuidv4(), columnId: column.id, title: cardText }
     setCards(prev => {
-      const updated = [...prev, cardText]
+      const updated = [...prev, newCard]
       // Scroll to bottom column after render
       setTimeout(() => {
         const el = cardsWrapperRef.current
@@ -37,16 +37,54 @@ const Column = ({
 
       return updated
     })
+    function addCardToColumnRef(ref, columnId, newCard) {
+      const col = ref.current.columns.find(c => c.id === columnId)
+      if (col) {
+        col.cards.push(newCard)
+        col.cardOrder.push(newCard.id)
+      }
+    }
+    addCardToColumnRef(listColumnsRef, column.id, newCard)
+    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
   }
 
   //Handle Change Title Column
   const handleChangeTitle = (newTitle) => {
-    setTitleColumn(newTitle)
+    setColumn((prev) => ({ ...prev, title: newTitle }))
+    const updatedColumns = listColumnsRef.current.columns.map((col) => {
+      if (col.id === column.id) {
+        return { ...col, title: newTitle }
+      }
+      return col
+    })
+    listColumnsRef.current.columns = updatedColumns
+    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
   }
 
 
+  //Handle MouseDowm Column as Drag Start
+  const handleMouseDownColumn = (e) => {
+    e.preventDefault();
+    const columnTarget = e.target.closest('[data-column-id]')
+    const rect = columnTarget.getBoundingClientRect()
+
+    // Lưu lại khoảng cách giữa chuột và Cột
+    distanceXFirst.current = e.clientX - rect.left
+    distanceYFirst.current = e.clientY - rect.top
+
+    //Clone Column Ghost
+    const cloneColumn = createGhostCardOrColumn(columnTarget, e.pageX, e.pageY, distanceXFirst.current, distanceYFirst.current)
+    cloneElRef.current = cloneColumn
+
+    dragStartRef.current = {
+      sourceCardId: null,
+      sourceColumnId: column.id,
+      isDragging: true
+    }
+  }
+
   //Handle MouseMoveCard
-  const swapCard = (sourceCol, targetCol, sourceCardId, targetCardId, isInsertEnd) => {
+  const swapCard = useCallback((sourceCol, targetCol, sourceCardId, targetCardId, isInsertEnd) => {
     const isSameColumn = sourceCol.id === targetCol.id
     // === CASE 1: Cùng cột ===
     if (isSameColumn) {
@@ -98,21 +136,6 @@ const Column = ({
       newTargetCol.cardOrder.push(updatedSourceCard.id);
       newTargetCol.cards.push(updatedSourceCard);
 
-      // } else {
-      //   if (!targetCardId) {
-      //   // CASE 2.1: CỘT RỖNG khi targetCardId = null 
-      //   newTargetCol.cardOrder.unshift(updatedSourceCard.id);
-      //   newTargetCol.cards.unshift(updatedSourceCard);
-
-      // } else {
-      //   // === CASE 2.2: Kéo sang cột khác có thẻ
-      //   const targetIndex = newTargetCol.cardOrder.indexOf(targetCardId);
-      //   if (targetIndex === -1) return [sourceCol, targetCol];
-
-      //   // Thêm source vào vị trí target trong cột đích
-      //   newTargetCol.cardOrder.splice(targetIndex, 0, updatedSourceCard.id);
-      //   newTargetCol.cards.splice(targetIndex, 0, updatedSourceCard);
-      // }
     } else if (targetCardId == null) {
       // CASE 2.1: CỘT RỖNG khi targetCardId = null 
       newTargetCol.cardOrder.unshift(updatedSourceCard.id);
@@ -129,27 +152,7 @@ const Column = ({
     // Cập nhật lại dữ liệu trong listColumnsRef sau khi xử lý kéo thả
     listColumnsRef.current = updateColumnsInRef(listColumnsRef.current, newSourceCol, newTargetCol);
     return [newSourceCol, newTargetCol];
-  }
-
-  const handleMouseDownColumn = (e) => {
-    e.preventDefault();
-    const columnTarget = e.target.closest('[data-column-id]')
-    const rect = columnTarget.getBoundingClientRect()
-
-    // Lưu lại khoảng cách giữa chuột và Cột
-    distanceXFirst.current = e.clientX - rect.left
-    distanceYFirst.current = e.clientY - rect.top
-
-    //Clone Column Ghost
-    const cloneColumn = createGhostCardOrColumn(columnTarget, e.pageX, e.pageY, distanceXFirst.current, distanceYFirst.current)
-    cloneElRef.current = cloneColumn
-
-    dragStartRef.current = {
-      sourceCardId: null,
-      sourceColumnId: column.id,
-      isDragging: true
-    }
-  }
+  }, [handleMouseDownColumn])
 
   //MOUSE UP
   useEffect(() => {
@@ -196,7 +199,7 @@ const Column = ({
               setColumn({ ...newTargetCol });
             }
           }
-
+          localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
         }
       }
 
@@ -207,15 +210,14 @@ const Column = ({
 
     })
     document.addEventListener("mouseup", handleMouseUpCard);
-    return () => document.removeEventListener("mousemove", handleMouseUpCard);
+    return () => document.removeEventListener("mouseup", handleMouseUpCard);
   }, [])
 
 
   return (
     <div className="column " data-column-id={column.id}>
       {/* Title Column */}
-      <ColumnTitle title={titleColumn} column={column} onChangeTitle={handleChangeTitle} handleMouseDownColumn={handleMouseDownColumn} />
-
+      <ColumnTitle column={column} onChangeTitle={handleChangeTitle} handleMouseDownColumn={handleMouseDownColumn} />
       {/* Content Column */}
       <div className="column-cards-wrapper" ref={cardsWrapperRef}>
         {cards.map((card, index) => (
