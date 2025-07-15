@@ -1,19 +1,19 @@
 .User-container {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background: #f4f4f4;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 
     .User-container-modal {
-        background: #ffffff;
-        padding: 32px 40px;
+        background: white;
+        padding: 40px;
         border-radius: 12px;
         width: 100%;
-        max-width: 420px;
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        max-width: 400px;
+        box-shadow: 0 0 0 1px #ddd;
         animation: fadeInUp 0.3s ease;
         font-family: 'Segoe UI', sans-serif;
         color: #1d2129;
@@ -22,7 +22,7 @@
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 24px;
-            color: #172b4d;
+            color: #000000;
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
         }
@@ -30,6 +30,7 @@
         .user-info {
             margin-bottom: 18px;
             border-bottom: 1px solid #eee;
+
 
             label {
                 display: block;

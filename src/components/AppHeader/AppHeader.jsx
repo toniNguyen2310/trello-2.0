@@ -2,12 +2,12 @@ import { useNavigate } from 'react-router-dom'
 import { FaRegUserCircle } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
 import { BiSolidUser } from "react-icons/bi";
-
 import './AppHeader.scss'
 import { useState } from 'react';
 const AppHeader = () => {
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
+
 
   return (
     <div className="app-header">
@@ -18,10 +18,11 @@ const AppHeader = () => {
           alt=""
         />
       </div>
-      {/* <div className='app-header-user' onClick={() => navigate('/login')}>
+
+      <div className='app-header-user' onClick={() => navigate('/login')}>
         <FaRegUserCircle />
-      </div> */}
-      <div className='app-header-authen'
+      </div>
+      {/* <div className='app-header-authen'
         onClick={() => setIsOpen(true)}
       >TN
         {isOpen && (
@@ -39,7 +40,7 @@ const AppHeader = () => {
             </div>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   )
 }

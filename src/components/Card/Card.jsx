@@ -1,17 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './Card.scss'
 import { createGhostCardOrColumn } from '../../utils/constants'
-import { useNavigate } from 'react-router-dom';
+import { FaRegEdit } from "react-icons/fa";
+import CardEditForm from './CardEditForm';
 
 
-const Card = ({ card, dragStartRef, dragEndRef, cloneElRef, distanceYFirst, distanceXFirst }) => {
+const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst, distanceXFirst, listColumnsRef }) => {
   const [cardTitle, setCardTitle] = useState(card.title)
-  const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false)
+  const wrapperRef = useRef(null)
 
-  //Handle Edit Card
-  const handleEditCard = () => {
-    // console.log('CLICK')
-  }
+
   //Handle Mouse Down
   const handleMouseDownCard = (e) => {
     const cardTarget = e.target
@@ -30,21 +29,100 @@ const Card = ({ card, dragStartRef, dragEndRef, cloneElRef, distanceYFirst, dist
       sourceColumnId: card.columnId,
       isDragging: true
     }
-
     //Save draggingStart
     dragStartRef.current = dragging
   }
-  return (
-    <div
-      className="card-item"
-      data-card-id={card.id}
-      data-card-columnid={card.columnId}
-      onMouseDown={handleMouseDownCard}
-      onClick={() => navigate('/board/card')
+  //Save title Card
+  const handleSaveTitleCard = (newTitle) => {
+
+    if (newTitle === card.title) {
+      setIsEditing(false)
+      return
+    }
+
+    setCardTitle(newTitle)
+    setIsEditing(false)
+
+    const column = listColumnsRef.current.columns.find(col => col.id === card.columnId)
+    if (!column) return
+    const cardToUpdate = column.cards.find(c => c.id === card.id)
+    cardToUpdate && (cardToUpdate.title = newTitle)
+    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+  }
+
+  //Delete Card
+  const handleDeleteCard = () => {
+    const updateCards = cards.filter(c => c.id !== card.id)
+    setCards(updateCards)
+    const column = listColumnsRef.current.columns.find(col => col.id === card.columnId)
+    column.cardOrder = column.cardOrder.filter(id => id !== card.id)
+    column.cards = column.cards.filter(c => c.id !== card.id)
+    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+  }
+
+
+  // Click outside để đóng form
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const clickedCardId = e.target.closest('[data-card-id]')?.dataset?.cardId
+      const isOutside = wrapperRef.current && !wrapperRef.current.contains(e.target)
+
+      if (isEditing && clickedCardId !== card.id && isOutside) {
+        setIsEditing(false)
       }
-    >
-      {cardTitle}
-    </div>
+    }
+
+    if (isEditing) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isEditing, card.id])
+
+  return (
+    <>
+      <div
+        ref={wrapperRef}
+        className={`card-item ${isEditing ? 'edit-mode' : ''}`}
+        data-card-id={card.id}
+        data-card-columnid={card.columnId}
+        onMouseDown={!isEditing ? handleMouseDownCard : undefined}
+
+      >{!isEditing ? (
+        <>
+          {cardTitle}
+          < div
+            className="edit-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true)
+            }}
+          >
+            <FaRegEdit />
+          </div >
+        </>
+      ) :
+        (
+          <CardEditForm
+            card={card}
+            title={cardTitle}
+            onClose={() => setIsEditing(false)}
+            onSave={handleSaveTitleCard}
+            onDelete={handleDeleteCard}
+          />
+        )}
+      </div >
+
+
+
+    </>
+
+
+
+
+
   )
 }
 

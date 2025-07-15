@@ -62,7 +62,7 @@ html,
 
       input:focus {
         border: 3px solid $primary-color;
-        box-shadow: 0 0 0 3px rgb(5, 255, 167);
+        box-shadow: 0 0 0 2px $primary-color;
       }
     }
 

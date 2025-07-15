@@ -35,7 +35,6 @@ const BoardContent = () => {
     }
   }, [])
 
-
   // Add New Column
   const handleAddColumn = (title) => {
     const newColumn = {
@@ -50,6 +49,19 @@ const BoardContent = () => {
     listColumnsRef.current.columns.push(newColumn)
     localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
   }
+  //Delete Column
+  const handleDeleteColumn = (columnId) => {
+    const updateColumns = columns.filter(col => col.id !== columnId)
+    setColumns(updateColumns)
+
+    listColumnsRef.current.columns = listColumnsRef.current.columns.filter(
+      col => col.id !== columnId
+    )
+    listColumnsRef.current.columnOrder = listColumnsRef.current.columnOrder.filter(
+      id => id !== columnId
+    )
+    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+  }
 
 
   // --- MOUSE UP: swap column nếu đang kéo column ---
@@ -58,8 +70,7 @@ const BoardContent = () => {
       e.preventDefault();
       const { sourceCardId, sourceColumnId, isDragging } = dragStartRef.current;
       const { targetColumnId } = dragEndRef.current;
-      console.log(dragStartRef.current)
-      console.log(dragEndRef.current)
+
       // Chỉ xử lý drag column, không phải card, và phải đang drag
       if (!isDragging || sourceCardId || !sourceColumnId) return;
 
@@ -91,7 +102,7 @@ const BoardContent = () => {
     const onMouseMove = (e) => {
       e.preventDefault();
       const { sourceCardId, sourceColumnId, isDragging } = dragStartRef.current
-      const { targetCardId, targetColumnId, isInsertEnd } = dragEndRef.current
+      const { targetCardId, targetColumnId } = dragEndRef.current
 
       if (!isDragging) return
 
@@ -216,8 +227,6 @@ const BoardContent = () => {
     return () => document.removeEventListener("mousemove", onMouseMove);
   }, [])
 
-
-
   return (
     <div className="board-content">
       {/* Render List Column */}
@@ -230,6 +239,7 @@ const BoardContent = () => {
           distanceXFirst={distanceXFirst}
           distanceYFirst={distanceYFirst}
           cloneElRef={cloneElRef}
+          handleDeleteColumn={handleDeleteColumn}
           listColumnsRef={listColumnsRef}
         />
       ))}

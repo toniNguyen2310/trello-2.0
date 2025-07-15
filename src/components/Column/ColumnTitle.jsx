@@ -1,14 +1,16 @@
 // ColumnTitle.jsx
 import React, { useState, useRef, useEffect } from 'react'
 import { IoIosMore } from "react-icons/io";
+import MiniPopConfirm from './MiniPopConfirm';
 
-
-const ColumnTitle = ({ column, onChangeTitle, handleMouseDownColumn }) => {
+const ColumnTitle = ({ column, onChangeTitle, handleMouseDownColumn, handleDeleteColumn }) => {
 
   const [editing, setEditing] = useState(false)
   const [newTitle, setNewTitle] = useState(column.title)
+  const [showConfirm, setShowConfirm] = useState(false)
   const inputRef = useRef(null)
   const wrapperRef = useRef(null)
+
 
   // Auto focus when editing
   useEffect(() => {
@@ -42,6 +44,7 @@ const ColumnTitle = ({ column, onChangeTitle, handleMouseDownColumn }) => {
   }
 
 
+
   return (
     <div className="column-title-wrapper"
       ref={wrapperRef}>
@@ -66,7 +69,29 @@ const ColumnTitle = ({ column, onChangeTitle, handleMouseDownColumn }) => {
           spellCheck={false}
         />
       )}
-      <div className="delete-column-btn"><IoIosMore /></div>
+
+
+      <div
+        className="delete-column-btn"
+        onClick={(e) => {
+          e.stopPropagation()
+          setShowConfirm(true)
+        }}
+      >
+        <IoIosMore />
+      </div>
+      {showConfirm && (
+        <MiniPopConfirm
+          message="Delete This Column?"
+          onConfirm={() => {
+            handleDeleteColumn(column.id)
+            setShowConfirm(false)
+          }}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
+
+
     </div>
 
   )

@@ -13,6 +13,7 @@ import ListBoard from "./components/ListBoard/ListBoard";
 import InforCard from "./components/Card/InforCard";
 import Pomodoro from "./components/Pomodoro/Pomodoro";
 import User from "./components/User/User";
+import CheckboxDemo from "./components/CheckDemo/CheckboxDemo";
 
 
 
@@ -24,13 +25,14 @@ function App() {
         {/* Các route có layout chung */}
         <Route path="/" element={<FullLayout />}>
           <Route index element={<ListBoard />} />
+          {/* <Route path="/pomodoro" element={<CheckboxDemo />} /> */}
           <Route path="/pomodoro" element={<Pomodoro />} />
         </Route>
 
         {/* Route chỉ có Navbar */}
         <Route element={<NavbarOnlyLayout />}>
           <Route path="/board" element={<Board />}>
-            <Route path="card" element={<InforCard />} />
+            <Route path="card/:id" element={<InforCard />} />
           </Route>
         </Route>
 

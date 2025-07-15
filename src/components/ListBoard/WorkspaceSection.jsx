@@ -5,7 +5,9 @@ import './ListBoardScss/WorkspaceSection.scss'
 const WorkspaceSection = ({ title, boards }) => {
     return (
         <div className="workspace-section">
-            <div className="workspace-title">{title}</div>
+            <div className="workspace-title">
+                {title}
+            </div>
 
             <div className="board-grid">
                 {boards.map((board, index) => (

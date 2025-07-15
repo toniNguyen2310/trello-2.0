@@ -12,10 +12,11 @@
   max-height: calc(100vh - 140px);
   border: 2px solid $column-bg;
   transition: border 0.2s ease;
-  gap: 12px;
+  gap: 5px;
 
   //COLUMN TITLE 
   .column-title-wrapper {
+    position: relative;
     border-radius: 5px;
     min-height: 40px;
     box-sizing: border-box;
@@ -132,4 +133,48 @@
 
 .isPlaceholderColumnBorder {
   border: 2px solid #4a91f6;
+}
+
+
+// MiniPopConfirm.scss
+.mini-popconfirm {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  z-index: 100;
+  top: 100%;
+
+  right: 0;
+
+  .mini-popconfirm-actions {
+    margin-top: 6px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 15px;
+
+    .yes,
+    .no {
+      padding: 3px 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid #ccc;
+    }
+
+    .yes {
+      background-color: #ff0000;
+      color: white;
+    }
+
+    .no {
+      // background-color: #e74c3c;
+      color: #8b8b8b;
+    }
+  }
 }

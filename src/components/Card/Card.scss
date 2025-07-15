@@ -1,26 +1,67 @@
 @import '../../styles/variables';
 
 .card-item {
+  position: relative;
   background-color: $card-bg;
   border-radius: 9px;
-  padding: 7px 12px;
+  padding: 8px 12px;
   font-size: 14px;
   color: #172b4d;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
   cursor: pointer;
   transition: border 0.3s ease;
   transition: background-color 0.3s;
-  // border: 1px solid #dbdbdd;
-  // background-color: red; 
+  text-align: left;
+  word-break: break-word;
 
-  &:target,
-  &:focus-within {
-    background-color: #e4f0f6;
+  .card-title {
+    padding-right: 24px; // để tránh icon che chữ
+
   }
 
-  text-align: left;
+  // .infor-container {
+  //   .infor-container-title {
+  //     // background-color: red;
+  //     display: flex;
+  //     gap: 8px;
+  //   }
 
+  //   .infor-container-des {
+  //     background-color: blue;
+  //   }
+  // }
 
+  .edit-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    padding: 4px;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: background-color 0.5s ease;
+
+    &:hover {
+      background-color: #5dc3eb;
+      opacity: 1;
+    }
+
+    svg {
+      font-size: 15px;
+      color: #000000;
+    }
+  }
+
+  // Khi hover vào toàn bộ thẻ thì hiện icon
+
+  &:hover .edit-icon {
+    opacity: 1;
+    pointer-events: auto; // cho phép click lại icon
+  }
 }
 
 .card-item:hover {
@@ -79,6 +120,11 @@
   background-color: rgb(228, 223, 223);
   color: rgb(228, 223, 223);
   opacity: 0.8;
+
+  &:hover .edit-icon {
+    opacity: 0;
+    pointer-events: auto; // cho phép click lại icon
+  }
 }
 
 .column.ghost-card {
@@ -112,4 +158,85 @@
     background-color: transparent !important;
 
   }
+
+}
+
+.card-item.edit-card-title {
+  background-color: rgb(228, 223, 223);
+}
+
+.edit-container {
+  z-index: 1000;
+
+  .edit-textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px 12px;
+    border: 2px solid #000000;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.4;
+    resize: none;
+    outline: none;
+    background: #ffffff;
+    color: #172b4d;
+    box-sizing: border-box;
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  .edit-textarea:focus {
+    border-color: #026aa7;
+    box-shadow: 0 0 0 3px rgba(0, 121, 191, 0.1);
+  }
+
+  .edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 900;
+
+    .edit-actions-btn {
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      font-weight: 600;
+    }
+
+    .save-btn {
+      background: #0c66e4;
+    }
+
+    .del-btn {
+      background: #e40c0c;
+    }
+
+    .detail-btn {
+      background: #1f845a;
+    }
+
+    .edit-actions-btn:hover {
+      opacity: 0.8;
+    }
+
+
+  }
+}
+
+.card-edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.25);
+  z-index: 10;
 }

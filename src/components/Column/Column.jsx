@@ -5,22 +5,22 @@ import './Column.scss'
 import ColumnTitle from './ColumnTitle'
 import { cloneColumn, createGhostCardOrColumn, resetDataDrag, sortOrder, updateColumnsInRef } from '../../utils/constants'
 import { v4 as uuidv4 } from 'uuid'
+import { useNavigate } from 'react-router-dom';
 
 const Column = ({
   columnProps,
   listColumnsRef,
-  onAddCard,
-  onChangeColumnTitle,
   dragEndRef,
   dragStartRef,
   cloneElRef,
   distanceXFirst,
   distanceYFirst,
-
+  handleDeleteColumn
 }) => {
   const [column, setColumn] = useState(columnProps)
   const [cards, setCards] = useState(sortOrder(columnProps.cards, columnProps.cardOrder, 'id'))
   const cardsWrapperRef = useRef(null)
+  const navigate = useNavigate();
 
   //Handle Add New Card
   const handleAddCard = (cardText) => {
@@ -168,6 +168,7 @@ const Column = ({
         cloneElRef.current = null
       }
 
+
       if (sourceCardId && sourceColumnId && targetColumnId) {
         //CHỈ CHẠY VÀO CỘT CÓ THẺ DnD
         if (!(column.id === sourceColumnId || column.id === targetColumnId)) return;
@@ -217,7 +218,7 @@ const Column = ({
   return (
     <div className="column " data-column-id={column.id}>
       {/* Title Column */}
-      <ColumnTitle column={column} onChangeTitle={handleChangeTitle} handleMouseDownColumn={handleMouseDownColumn} />
+      <ColumnTitle column={column} onChangeTitle={handleChangeTitle} handleMouseDownColumn={handleMouseDownColumn} handleDeleteColumn={handleDeleteColumn} />
       {/* Content Column */}
       <div className="column-cards-wrapper" ref={cardsWrapperRef}>
         {cards.map((card, index) => (
@@ -229,6 +230,9 @@ const Column = ({
             distanceXFirst={distanceXFirst}
             distanceYFirst={distanceYFirst}
             cloneElRef={cloneElRef}
+            setCards={setCards}
+            cards={cards}
+            listColumnsRef={listColumnsRef}
           />
         ))}
       </div>

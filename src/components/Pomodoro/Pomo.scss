@@ -1,0 +1,447 @@
+// Variables
+$primary-gradient: linear-gradient(to right, #8e0e00, #1f1c18);
+$secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+$glass-bg: rgba(255, 255, 255, 0.1);
+$glass-border: rgba(255, 255, 255, 0.2);
+$text-primary: #ffffff;
+$text-secondary: rgba(255, 255, 255, 0.8);
+$shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+$shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+$work-color: #ef4444;
+$short-break-color: #10b981;
+$long-break-color: #3b82f6;
+
+// Mixins
+@mixin glass-effect {
+    background: $glass-bg;
+    backdrop-filter: blur(20px);
+    border: 1px solid $glass-border;
+}
+
+@mixin button-base {
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    outline: none;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// Base styles
+.pomodoro-app {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    // background: $primary-gradient;
+    @include flex-center;
+    padding: 20px;
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+}
+
+.container {
+    @include glass-effect;
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: $shadow-lg;
+    background: $primary-gradient;
+
+}
+
+// Header
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+
+    h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: $text-primary;
+        background: linear-gradient(45deg, #fff, #e0e7ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .settings-btn {
+        @include button-base;
+        @include flex-center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        color: $text-primary;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+    }
+}
+
+// Settings Panel
+.settings-panel {
+    @include glass-effect;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    animation: slideDown 0.3s ease;
+
+    h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: $text-primary;
+        margin-bottom: 16px;
+    }
+
+    .settings-grid {
+        display: grid;
+        gap: 16px;
+    }
+
+    .setting-group {
+        label {
+            display: block;
+            color: $text-secondary;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: $text-primary;
+            font-size: 14px;
+            transition: all 0.3s ease;
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            &:focus {
+                outline: none;
+                border-color: rgba(255, 255, 255, 0.6);
+                background: rgba(255, 255, 255, 0.25);
+                box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            }
+        }
+    }
+}
+
+// Mode Tabs
+.mode-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+
+    .tab {
+        @include button-base;
+        flex: 1;
+        padding: 12px 16px;
+        font-size: 14px;
+        background: rgba(255, 255, 255, 0.2);
+        color: $text-primary;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        &:hover::before {
+            left: 100%;
+        }
+
+        &.active {
+            background: $text-primary;
+            color: #1a202c;
+            box-shadow: $shadow-md;
+
+            &::before {
+                display: none;
+            }
+        }
+
+        &:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    }
+}
+
+// Timer Display
+.timer-display {
+    text-align: center;
+    margin-bottom: 32px;
+
+
+    &.active .timer-circle {
+        animation: pulse 2s infinite;
+    }
+
+    .timer-circle {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin: 0 auto 24px;
+        // background-color: blue;
+
+
+        svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+
+            .bg-circle {
+                fill: none;
+                stroke: rgba(255, 255, 255, 0.2);
+                stroke-width: 2;
+            }
+
+            .progress-circle {
+                fill: none;
+                stroke: $text-primary;
+                stroke-width: 3;
+                stroke-linecap: round;
+                transition: stroke-dashoffset 1s ease;
+                filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+            }
+        }
+
+        .timer-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+
+            .timer-icon {
+                width: 50px;
+                height: 50px;
+                color: $text-primary;
+                margin-bottom: 8px;
+                opacity: 0.9;
+            }
+
+            .timer-time {
+                font-size: 40px;
+                font-weight: 700;
+                color: $text-primary;
+                font-family: 'Courier New', monospace;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                letter-spacing: 2px;
+            }
+
+            .timer-mode {
+                color: $text-secondary;
+                font-size: 14px;
+                margin-top: 4px;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+        }
+    }
+}
+
+// Controls
+.controls {
+    @include flex-center;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .control-btn {
+        @include button-base;
+        @include flex-center;
+        border-radius: 50%;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        &:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        &.play-pause {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            color: #1a202c;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+            &:hover {
+                background: linear-gradient(145deg, #f0f0f0, #ffffff);
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            }
+        }
+
+        &.reset {
+            width: 64px;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.2);
+            color: $text-primary;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+        }
+    }
+}
+
+// Session Counter
+.session-counter {
+    text-align: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    .counter-label {
+        color: $text-secondary;
+        font-size: 14px;
+        margin-bottom: 8px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .counter-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: $text-primary;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}
+
+// Animations
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.02);
+        opacity: 0.95;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+    .container {
+        padding: 24px;
+        margin: 16px;
+    }
+
+    .timer-display .timer-circle {
+        width: 200px;
+        height: 200px;
+
+        .timer-content .timer-time {
+            font-size: 32px;
+        }
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .mode-tabs .tab {
+        font-size: 12px;
+        padding: 10px 12px;
+    }
+
+    .controls .control-btn {
+
+        &.play-pause,
+        &.reset {
+            width: 56px;
+            height: 56px;
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 16px;
+    }
+
+    .timer-display .timer-circle {
+        width: 180px;
+        height: 180px;
+
+        .timer-content .timer-time {
+            font-size: 28px;
+        }
+    }
+}
