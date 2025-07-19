@@ -36,19 +36,25 @@ html,
 
 
     .board-title {
-      padding: 0px 10px;
-      border-radius: 5px;
-      // background-color: red;
-      height: 30px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      // padding: 0px 10px;
 
-      h1 {
-        // background-color: blue;
+      height: 30px;
+      // background-color: #fff;
+      width: 100%;
+
+      .title-name {
         font-size: 18px;
         font-weight: bold;
         cursor: pointer;
+        border-radius: 5px;
+        padding: 5px;
+      }
 
+      .title-name:hover {
+        background-color: rgba(255, 255, 255, 0.3);
       }
 
       input {
@@ -58,11 +64,27 @@ html,
         border: none;
         outline: none;
         font-weight: bold;
+        color: black;
       }
 
       input:focus {
         border: 3px solid $primary-color;
         box-shadow: 0 0 0 2px $primary-color;
+      }
+
+      .delete-board {
+        // background-color: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+        // opacity: 1
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      .delete-board:hover {
+        background-color: rgba(255, 255, 255, 0.3);
       }
     }
 
@@ -71,9 +93,7 @@ html,
       /* khi input được focus */
     }
 
-    .board-title-hover:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
+
   }
 
   //BOARD CONTENT
@@ -89,7 +109,7 @@ html,
     height: 100%;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
     // box-sizing: border-box;
-    background-color: $background-color;
+    background: $background-color;
 
   }
 }

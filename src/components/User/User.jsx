@@ -1,9 +1,33 @@
+import { useAuth } from '@contexts/AuthContext'
 import './User.scss'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { getUserDetail } from 'service/apis'
+import { useEffect } from 'react'
+import { isEqual } from 'lodash'
 
 function User() {
     const navigate = useNavigate()
+    const { user, setUser } = useAuth()
+    const { userId } = useParams()
 
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (!user?._id) return
+            try {
+                const userApi = await getUserDetail(userId)
+                // So sánh nếu khác thì cập nhật
+                if (!isEqual(user, userApi)) {
+                    setUser(userApi)
+                }
+            } catch (err) {
+                console.error('Lỗi fetch user detail:', err)
+            }
+        }
+
+        fetchUser()
+    }, [user?._id])
+
+    if (!user) return <div>Đang tải...</div>
     return (
         <div className="User-container">
             <div className="User-container-modal">
@@ -11,17 +35,19 @@ function User() {
 
                 <div className="user-info">
                     <label>Email</label>
-                    <p>123x@gmail.com</p>
+                    <p>{user?.email}</p>
                 </div>
 
                 <div className="user-info">
                     <label>Họ tên</label>
-                    <p>Tùng</p>
+                    <p>{user?.username}</p>
                 </div>
 
                 <div className="user-info">
                     <label>Thành viên từ</label>
-                    <p>23/10</p>
+                    <p>{new Date(user?.createdAt).toLocaleDateString('vi-VN', {
+                        timeZone: 'Asia/Ho_Chi_Minh'
+                    })}</p>
                 </div>
                 <div className="user-actions">
                     <button className="btn-secondary" onClick={() => navigate('/')}>Đóng</button>

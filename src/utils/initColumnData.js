@@ -1,5 +1,6 @@
 export const initDataBoard = {
     id: '1412',
+    title: 'gì đó',
     columnOrder: ['cột1', 'cột2', 'cột3', 'cột4'],
     columns: [
         {
@@ -40,6 +41,9 @@ export const initDataBoard = {
 
     ]
 }
+
+
+
 
 
 

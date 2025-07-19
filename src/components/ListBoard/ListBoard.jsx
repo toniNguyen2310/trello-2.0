@@ -1,28 +1,44 @@
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './ListBoardScss/ListBoard.scss'
 import WorkspaceSection from './WorkspaceSection'
+import { useAuth } from '@contexts/AuthContext';
+import { getBoardsByUser } from 'service/apis';
 
 const ListBoard = () => {
+    const [boards, setBoards] = useState([]);
+    const { user } = useAuth()
+
     const yourBoards = [
-        { name: 'Frontend Project', bgColor: '#04d5ffff' },
-        { name: 'Marketing Plan', bgColor: '#ff9500ff' }
+        { title: 'Frontend Project', color: 'linear-gradient(to bottom, #833ab4, #fd1d1d, #fcb045)' },
+        { title: 'Marketing Plan', color: '#ff9500ff' }
     ]
 
-    const guestBoards = [
-        { name: 'Guest Roadmap', bgColor: '#40ff00ff' },
-        { name: 'Feedback Board', bgColor: '#fb2a00ff' }
-    ]
+    useEffect(() => {
+        if (!user?._id) return;
+
+        const fetchBoards = async () => {
+            try {
+                const res = await getBoardsByUser(user._id);
+                setBoards(res.boards);
+            } catch (err) {
+                console.error("Không lấy được boards", err);
+            }
+        };
+
+        fetchBoards();
+    }, [user]);
+
     return (
         <div>
             <WorkspaceSection
-                title="Your Workspaces"
-                boards={yourBoards}
+                title="YOUR WORKSPACES"
+                boards={boards}
             />
-            <WorkspaceSection
+            {/* <WorkspaceSection
                 title="Guest Workspaces"
                 boards={guestBoards}
-            />
+            /> */}
         </div>
     )
 }

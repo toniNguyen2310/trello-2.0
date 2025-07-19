@@ -3,14 +3,18 @@ import TextInput from './common/TextInput';
 import PasswordInput from './common/PasswordInput';
 import ButtonForm from './common/ButtonForm';
 import './auth.scss'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '@contexts/AuthContext';
+import { signupAPI } from 'service/apis';
+import { message } from "antd";
 
 function Signup() {
+    const { signupContext } = useAuth()
+    const navigate = useNavigate()
     const [formData, setFormData] = useState({
-        name: '',
+        username: '',
         email: '',
         password: '',
-        confirmPassword: ''
     });
 
     const handleChange = (e) => {
@@ -18,9 +22,29 @@ function Signup() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Registering:', formData);
+        const data = Object.fromEntries(
+            Object.entries(formData).map(([key, value]) =>
+                [key, typeof value === "string" ? value.trim() : value]
+            )
+        )
+
+
+        try {
+            const res = await signupAPI(data);
+            const { accessToken, refreshToken, user } = res;
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+            signupContext(user);
+            navigate("/");
+        } catch (err) {
+            console.log(err.message)
+            const errMsg =
+                err?.message || "Đăng ký thất bại!";
+            message.error(errMsg);
+        }
+
     };
     return (
         <div className="form-container">
@@ -30,11 +54,11 @@ function Signup() {
 
                 <TextInput
                     label="Name"
-                    name="name"
+                    name="username"
                     type="text"
-                    value={formData.name}
+                    value={formData.username}
                     onChange={handleChange}
-                    placeholder="Your full name"
+                    placeholder="Name"
                 />
 
                 <TextInput
@@ -55,12 +79,12 @@ function Signup() {
                 />
 
                 <ButtonForm text="Sign up →" />
-                <p className="redirect">
+                <div className="redirect">
                     <span> Already have an account?</span> <Link to="/login">Log in now!</Link>
                     <div className="or-back">
-                        or <Link to="/board">Back to Trello</Link>
+                        or <Link to="/">Back to Trello</Link>
                     </div>
-                </p>
+                </div>
 
             </form>
         </div>

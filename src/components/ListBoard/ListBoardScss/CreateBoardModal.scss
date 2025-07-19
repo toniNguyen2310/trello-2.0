@@ -1,0 +1,288 @@
+// CreateBoardModal.scss
+
+
+.modal {
+    position: absolute;
+    top: 0%;
+    right: -25%;
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    width: 310px;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+    // background-color: red;
+    z-index: 9999 !important;
+
+    @keyframes modalSlideIn {
+        from {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+
+    .modal-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #172b4d;
+        margin: 0;
+    }
+
+    .close-btn {
+        position: absolute;
+        right: 0;
+        // top: 2%;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: scale#6b778c;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: #dbdcdd;
+            color: #172b4d;
+        }
+    }
+}
+
+.board-preview {
+    margin-bottom: 24px;
+    padding: 0px 10px;
+    display: flex;
+    justify-content: center;
+
+    .preview-container {
+        width: 80%;
+        height: 100px;
+        border-radius: 10px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding: 12px;
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+        box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+
+        .board-lists {
+            display: flex;
+            gap: 8px;
+            height: 100%;
+            box-sizing: border-box;
+            justify-content: center;
+
+            .board-list {
+                width: 70px;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                .list-items {
+                    display: flex;
+                    flex-direction: column;
+                    border-radius: 6px;
+                    padding: 5px;
+                    gap: 4px;
+                    background-color: #ffffff;
+
+                    .list-item {
+                        height: 12px;
+                        background: rgba(0, 0, 0, 0.05);
+                        border-radius: 2px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.background-section {
+    margin-bottom: 24px;
+    box-sizing: border-box;
+
+    .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #172b4d;
+
+    }
+
+    .background-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        // background-color: red;
+        box-sizing: border-box;
+        padding: 5px;
+        ;
+
+        .color-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            box-sizing: border-box;
+
+            &.bottom-row {
+                animation: slideDown 0.2s ease-out;
+            }
+
+            @keyframes slideDown {
+                from {
+                    transform: translateY(-10px);
+                    opacity: 0;
+                }
+
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        }
+
+        .background-option {
+            border-radius: 6px;
+            // border: 1px solid;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding: 35% 0%;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+
+            &:hover {
+                transform: scale(1.05);
+            }
+
+            &.selected {
+                // border-color: #000000;
+                box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(29, 11, 233) 0px 0px 0px 3px;
+            }
+
+            &.more-option {
+                background: #f4f5f7;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                color: #6b778c;
+                font-weight: bold;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    background: #e4e6ea;
+                }
+
+                &.expanded {
+                    transform: rotate(180deg);
+                }
+
+                .more {
+                    display: flex;
+                    align-items: center;
+                }
+            }
+        }
+    }
+}
+
+.form-section {
+    .form-group {
+        margin-bottom: 16px;
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #172b4d;
+            margin-bottom: 8px;
+
+            .required {
+                color: #de350b;
+            }
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dfe1e6;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+
+            &:focus {
+                outline: none;
+                border-color: #0079bf;
+            }
+
+            &.error {
+                border-color: #de350b;
+            }
+        }
+
+        .error-message {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #de350b;
+            font-size: 12px;
+            margin-top: 6px;
+
+            .error-icon {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+.button-create {
+    background-color: #0c66e4;
+    padding: 8px 0px;
+    border-radius: 5px;
+    color: #ffffff;
+    font-weight: 500;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+
+}
+
+.button-create:hover {
+    opacity: 0.8;
+}
+
+// Responsive design
+@media (max-width: 480px) {
+    .modal {
+        margin: 16px;
+        padding: 20px;
+    }
+
+    .background-options {
+        .color-row {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+}

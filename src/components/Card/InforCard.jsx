@@ -4,52 +4,103 @@ import { IoIosCloseCircle } from "react-icons/io";
 import './InforCard.scss'
 import { FiAlignLeft } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
+import { getCardDetail } from 'service/apis';
+import _ from 'lodash';
 
 const InforCard = () => {
-    const { id } = useParams()
+    const { boardId, id } = useParams()
     const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [description, setDescription] = useState(`1. SQL → visualization tool(power bi and superest) `);
-    const [infor, setInfor] = useState({})
+    const [description, setDescription] = useState("");
+    const [inforCard, setInforCard] = useState(null)
+    const [loading, setLoading] = useState(true);
+
     const closeModal = () => {
         navigate(-1);
         setIsEditing(false);
+        setInforCard(null);
+        setDescription("")
     };
 
     const handleEdit = () => setIsEditing(true);
-
     const handleSave = () => {
         setIsEditing(false);
-        // Logic to save description
     };
-
     const handleCancel = () => {
         setIsEditing(false);
-        // Reset to original description if needed
     };
 
-    useEffect(() => {
-        function findCardWithColumnTitle(board, cardId) {
-            for (const column of board.columns) {
-                const card = column.cards.find((c) => c.id === cardId)
-                if (card) {
-                    return {
-                        ...card,
-                        columnTitle: column.title
-                    }
+    const findCardWithColumnTitle = (board, cardId) => {
+        for (const column of board.columns) {
+            const card = column.cards.find((c) => c.id === cardId)
+            if (card) {
+                return {
+                    id: card.id,
+                    columnTitle: column.title,
+                    status: card.status,
+                    description: card.description,
+                    title: card.title,
+                    columnId: card.columnId
                 }
             }
-            return null
         }
+        return null
+    }
+
+    useEffect(() => {
         const fetchCardDetail = async () => {
-            const board = JSON.parse(localStorage.getItem('trelloBoard'))
-            const valueApi = findCardWithColumnTitle(board, id)
-            console.log(valueApi)
-            setInfor(valueApi)
+            setLoading(true);
+            let valueLS = null;
+            try {
+                const boardLS = localStorage.getItem(`trelloBoard-${boardId}`)
+
+                if (boardLS) {
+                    const board = JSON.parse(boardLS);
+                    valueLS = findCardWithColumnTitle(board, id);
+                    if (valueLS) {
+                        setInforCard(valueLS);
+                        setDescription(valueLS.description);
+                    }
+                    const valueApi = await getCardDetail(id)
+
+                    if (!valueLS || !_.isEqual(valueLS, valueApi)) {
+                        setInforCard(valueApi)
+                        setDescription(valueApi.description || '')
+                    }
+                }
+            } catch (err) {
+                console.error('Không thể lấy chi tiết card:', err)
+
+            } finally {
+                setLoading(false);
+            }
+
         }
+
         fetchCardDetail()
-    }, [id])
+    }, [id, boardId])
+
+    useEffect(() => {
+        if (!loading && !inforCard) {
+            navigate(`/board/${boardId}`);
+        }
+    }, [loading, inforCard]);
+
+    if (loading) {
+        return (
+            <div className="modal-overlay">
+                <div className="modal-content loading">Loading...</div>
+            </div>
+        );
+    }
+
+    if (!inforCard) {
+        return (
+            <div className="modal-overlay">
+                <div className="modal-content error">Card not found</div>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -59,7 +110,7 @@ const InforCard = () => {
                     <div className="modal-header">
                         <div className="header-left">
                             <div className="da-badge">
-                                <span className="da-label">{infor?.columnTitle}</span>
+                                <span className="da-label">{inforCard?.columnTitle}</span>
                             </div>
                         </div>
                         <button onClick={closeModal} className="close-button">
@@ -72,7 +123,7 @@ const InforCard = () => {
                         {/* Title */}
                         <div className="title-section">
                             <div className="title-circle"></div>
-                            <h2 className="title-text">{infor?.title}</h2>
+                            <h2 className="title-text">{inforCard?.title}</h2>
                         </div>
 
                         {/* Description Section */}

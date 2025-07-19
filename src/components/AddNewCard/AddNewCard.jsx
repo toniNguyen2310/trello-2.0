@@ -58,7 +58,8 @@ const AddNewCard = ({ column, onAddCard }) => {
             autoFocus
           />
           <div className="actions">
-            <button onClick={handleAdd}>Add a card</button>
+            <button onClick={handleAdd}>Unshift</button>
+            <button onClick={handleAdd}>Push </button>
             <button className="cancel" onClick={() => setAdding(false)}>
               <ImCross />
             </button>

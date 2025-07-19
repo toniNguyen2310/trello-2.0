@@ -15,6 +15,7 @@ const PasswordInput = ({ label, name, value, onChange, placeholder }) => {
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
+                minLength={6}
                 required
             />
             <button

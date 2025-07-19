@@ -5,41 +5,29 @@ import AddNewColumn from '../AddNewColumn/AddNewColumn'
 import { resetDataDrag, sortOrder } from '../../utils/constants'
 import { swapColumnsInRef } from '../../utils/swapColumnsInRef '
 import { v4 as uuidv4 } from 'uuid'
+import { createColumnAPI, deleteColumnApiById } from 'service/apis'
 
 
-const BoardContent = () => {
+const BoardContent = ({ board, colorOb, listColumnsRef }) => {
   const [columns, setColumns] = useState([])
-  const [board, setBoard] = useState({})
-  const listColumnsRef = useRef({})
   const cloneElRef = useRef(null)
   const [distanceXFirst, distanceYFirst] = [useRef(0), useRef(0),];
   let dragStartRef = useRef({ sourceCardId: null, sourceColumnId: null, isDragging: false })
   let dragEndRef = useRef({ targetCardId: null, targetColumnId: null, isInsertEnd: false })
 
-  // --- MOUNT: load data ---
   useEffect(() => {
-    //Render dữ liệu API or LS
-    const savedBoard = localStorage.getItem('trelloBoard')
-    if (savedBoard) {
-      const parsedBoard = JSON.parse(savedBoard)
-      setBoard(parsedBoard)
-      listColumnsRef.current = parsedBoard
-      setColumns(sortOrder(parsedBoard.columns, parsedBoard.columnOrder, "id"))
-    } else {
-      // Nếu không có dữ liệu trong Local Storage, sử dụng initDataBoard
-      setBoard(initDataBoard)
-      listColumnsRef.current = initDataBoard
-      setColumns(sortOrder(initDataBoard.columns, initDataBoard.columnOrder, "id"))
-      // Lưu dữ liệu mặc định vào Local Storage
-      localStorage.setItem('trelloBoard', JSON.stringify(initDataBoard))
+    if (board?.columns && board?.columnOrder) {
+      const sorted = sortOrder(board.columns, board.columnOrder, 'id')
+      setColumns(sorted)
+      console.log('boardReset>> ', board)
     }
-  }, [])
+  }, [board])
 
   // Add New Column
   const handleAddColumn = (title) => {
     const newColumn = {
       id: "column-" + uuidv4(),
-      boardId: board.id,
+      boardId: board._id,
       title: title,
       cardOrder: [],
       cards: [],
@@ -47,8 +35,15 @@ const BoardContent = () => {
     setColumns([...columns, newColumn])
     listColumnsRef.current.columnOrder.push(newColumn.id)
     listColumnsRef.current.columns.push(newColumn)
-    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+    localStorage.setItem(`trelloBoard-${board._id}`, JSON.stringify(listColumnsRef.current))
+    createColumnAPI({
+      idLS: newColumn.id,
+      boardId: newColumn.boardId,
+      title: newColumn.title,
+      userId: board.ownerId
+    })
   }
+
   //Delete Column
   const handleDeleteColumn = (columnId) => {
     const updateColumns = columns.filter(col => col.id !== columnId)
@@ -60,7 +55,9 @@ const BoardContent = () => {
     listColumnsRef.current.columnOrder = listColumnsRef.current.columnOrder.filter(
       id => id !== columnId
     )
-    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+    localStorage.setItem(`trelloBoard-${board._id}`, JSON.stringify(listColumnsRef.current))
+    //api
+    deleteColumnApiById({ columnId: columnId })
   }
 
 
@@ -228,7 +225,7 @@ const BoardContent = () => {
   }, [])
 
   return (
-    <div className="board-content">
+    <div className="board-content" style={{ background: colorOb.base }}>
       {/* Render List Column */}
       {columns.map((column, index) => (
         <Column

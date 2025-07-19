@@ -1,3 +1,8 @@
+export const KEY_INFO_USER = "info_user"
+
+
+
+
 export const generateId = () => Date.now().toString()
 //Sort array order
 export const sortOrder = (array, order, key) => {
@@ -104,5 +109,22 @@ export function updateColumnsInRef(current, newSourceCol, newTargetCol = null) {
 }
 
 
+// Hàng trên: 5 màu cơ bản
+export const topRowColors = [
+    '#4bbf6b', // light blue
+    '#0079bf', // blue
+    '#dc2626', // blue
+    '#89609e', // dark blue
+    '#000000ff'  // light purple
+];
 
+// Hàng dưới: 6 màu bổ sung
+export const bottomRowColors = [
+    'linear-gradient(to bottom, #833ab4, #fd1d1d, #fcb045)',
+    'linear-gradient(to bottom, #fdfc47, #24fe41)',
+    'linear-gradient(to bottom, #ff00cc, #333399)',
+    'linear-gradient(to bottom, #fc4a1a, #f7b733)',
+    'linear-gradient(to bottom, #373b44, #4286f4)',
+    'linear-gradient(to bottom, #00c9ff, #92fe9d)',
+];
 

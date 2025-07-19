@@ -6,6 +6,7 @@ import ColumnTitle from './ColumnTitle'
 import { cloneColumn, createGhostCardOrColumn, resetDataDrag, sortOrder, updateColumnsInRef } from '../../utils/constants'
 import { v4 as uuidv4 } from 'uuid'
 import { useNavigate } from 'react-router-dom';
+import { createCardAPI } from 'service/apis'
 
 const Column = ({
   columnProps,
@@ -24,7 +25,14 @@ const Column = ({
 
   //Handle Add New Card
   const handleAddCard = (cardText) => {
-    let newCard = { id: 'card' + uuidv4(), columnId: column.id, title: cardText }
+    let newCard = {
+      id: 'card-' + uuidv4(),
+      columnId: column.id,
+      title: cardText,
+      status: false,
+      description: ""
+    }
+
     setCards(prev => {
       const updated = [...prev, newCard]
       // Scroll to bottom column after render
@@ -37,6 +45,7 @@ const Column = ({
 
       return updated
     })
+
     function addCardToColumnRef(ref, columnId, newCard) {
       const col = ref.current.columns.find(c => c.id === columnId)
       if (col) {
@@ -45,7 +54,12 @@ const Column = ({
       }
     }
     addCardToColumnRef(listColumnsRef, column.id, newCard)
-    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+    localStorage.setItem(`trelloBoard-${column.boardId}`, JSON.stringify(listColumnsRef.current))
+    createCardAPI({
+      idLS: newCard.id,
+      columnId: newCard.columnId,
+      title: newCard.title,
+    })
   }
 
   //Handle Change Title Column

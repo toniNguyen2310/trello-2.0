@@ -3,13 +3,13 @@ import './Card.scss'
 import { createGhostCardOrColumn } from '../../utils/constants'
 import { FaRegEdit } from "react-icons/fa";
 import CardEditForm from './CardEditForm';
+import { deleteCardById, updateCardTitleById } from 'service/apis';
 
 
 const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst, distanceXFirst, listColumnsRef }) => {
   const [cardTitle, setCardTitle] = useState(card.title)
   const [isEditing, setIsEditing] = useState(false)
   const wrapperRef = useRef(null)
-
 
   //Handle Mouse Down
   const handleMouseDownCard = (e) => {
@@ -32,22 +32,22 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
     //Save draggingStart
     dragStartRef.current = dragging
   }
+
   //Save title Card
   const handleSaveTitleCard = (newTitle) => {
-
     if (newTitle === card.title) {
       setIsEditing(false)
       return
     }
-
     setCardTitle(newTitle)
     setIsEditing(false)
-
     const column = listColumnsRef.current.columns.find(col => col.id === card.columnId)
     if (!column) return
     const cardToUpdate = column.cards.find(c => c.id === card.id)
     cardToUpdate && (cardToUpdate.title = newTitle)
-    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+    localStorage.setItem(`trelloBoard-${listColumnsRef.current._id}`, JSON.stringify(listColumnsRef.current))
+
+    updateCardTitleById({ cardId: card.id, title: newTitle })
   }
 
   //Delete Card
@@ -57,7 +57,8 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
     const column = listColumnsRef.current.columns.find(col => col.id === card.columnId)
     column.cardOrder = column.cardOrder.filter(id => id !== card.id)
     column.cards = column.cards.filter(c => c.id !== card.id)
-    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+    localStorage.setItem(`trelloBoard-${listColumnsRef.current._id}`, JSON.stringify(listColumnsRef.current))
+    deleteCardById({ cardId: card.id })
   }
 
 

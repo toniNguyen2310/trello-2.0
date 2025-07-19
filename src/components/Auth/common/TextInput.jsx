@@ -10,6 +10,7 @@ const TextInput = ({ label, type, name, value, onChange, placeholder }) => (
             value={value}
             onChange={onChange}
             required
+            minLength={4}
         />
     </div>
 )

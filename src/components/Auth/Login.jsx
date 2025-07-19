@@ -3,16 +3,44 @@ import './auth.scss'
 import TextInput from './common/TextInput'
 import ButtonForm from './common/ButtonForm'
 import PasswordInput from './common/PasswordInput'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { loginAPI } from 'service/apis'
+import { useAuth } from '@contexts/AuthContext'
+import { message } from "antd";
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { loginContext } = useAuth()
+    const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Login with:', { email, password });
+
+        const data = {
+            email: email.trim(),
+            password: password.trim(),
+        };
+
+        try {
+            const res = await loginAPI(data);
+            if (res) {
+                const { accessToken, refreshToken, user } = res;
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
+                loginContext(user);
+                message.success("Đăng nhập thành công!");
+                navigate("/");
+            } else {
+                message.error("Thông tin đăng nhập không đúng");
+            }
+        } catch (err) {
+            const errorMsg = err?.message || "Đăng nhập thất bại!";
+            message.error(errorMsg);
+            console.error("Login error:", err);
+        }
     };
+
 
     return (
         <div className="form-container">
@@ -39,12 +67,12 @@ const LoginForm = () => {
 
                 <ButtonForm text="Log in →" />
 
-                <p className="redirect">
+                <div className="redirect">
                     <span>Don’t have an account?</span> <Link to="/signup">Sign up now!</Link>
                     <div className="or-back">
-                        or <Link to="/board">Back to Trello</Link>
+                        or <Link to="/">Back to Trello</Link>
                     </div>
-                </p>
+                </div>
 
             </form>
         </div>
