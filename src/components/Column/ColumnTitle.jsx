@@ -2,38 +2,29 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { IoIosMore } from "react-icons/io";
 import MiniPopConfirm from './MiniPopConfirm';
+import { Popconfirm } from 'antd';
+import useClickOutside from '@utils/customHooks/useClickOutside';
 
 const ColumnTitle = ({ column, onChangeTitle, handleMouseDownColumn, handleDeleteColumn }) => {
-
   const [editing, setEditing] = useState(false)
   const [newTitle, setNewTitle] = useState(column.title)
-  const [showConfirm, setShowConfirm] = useState(false)
   const inputRef = useRef(null)
   const wrapperRef = useRef(null)
-
 
   // Auto focus when editing
   useEffect(() => {
     if (editing) inputRef.current?.focus()
   }, [editing])
 
+  useClickOutside({
+    ref: wrapperRef,
+    callback: () => {
+      confirmChange()
+    },
+    active: editing,
+    deps: [newTitle]
+  })
 
-  // Confirm change when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-        confirmChange()
-      }
-    }
-
-    if (editing) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [editing, newTitle])
 
   const confirmChange = () => {
     const trimmed = newTitle.trim()
@@ -42,8 +33,6 @@ const ColumnTitle = ({ column, onChangeTitle, handleMouseDownColumn, handleDelet
     }
     setEditing(false)
   }
-
-
 
   return (
     <div className="column-title-wrapper"
@@ -69,29 +58,23 @@ const ColumnTitle = ({ column, onChangeTitle, handleMouseDownColumn, handleDelet
           spellCheck={false}
         />
       )}
-
-
-      <div
-        className="delete-column-btn"
-        onClick={(e) => {
+      <Popconfirm
+        placement="right"
+        title="Delete the column"
+        description="Are you sure?"
+        okText="Yes"
+        cancelText="No"
+        onConfirm={(e) => {
           e.stopPropagation()
-          setShowConfirm(true)
+          handleDeleteColumn(column.id)
         }}
       >
-        <IoIosMore />
-      </div>
-      {showConfirm && (
-        <MiniPopConfirm
-          message="Delete This Column?"
-          onConfirm={() => {
-            handleDeleteColumn(column.id)
-            setShowConfirm(false)
-          }}
-          onCancel={() => setShowConfirm(false)}
-        />
-      )}
-
-
+        <div
+          className="delete-column-btn"
+        >
+          <IoIosMore />
+        </div>
+      </Popconfirm>
     </div>
 
   )

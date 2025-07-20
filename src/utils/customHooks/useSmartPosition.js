@@ -10,10 +10,10 @@ export const useSmartPosition = (ref) => {
             const screenWidth = window.innerWidth;
 
             if (rect.left < screenWidth / 2) {
-                console.log('R')
+                // console.log('R')
                 setPosition('right');
             } else {
-                console.log('L')
+                // console.log('L')
 
                 setPosition('left');
             }

@@ -10,7 +10,7 @@ import NavbarOnlyLayout from "./components/Layout/NavbarOnlyLayout";
 import FullLayout from "./components/Layout/FullLayout";
 import { AuthProvider } from './contexts/AuthContext'
 import ListBoard from "./components/ListBoard/ListBoard";
-import InforCard from "./components/Card/InforCard";
+import InforCard from "./components/Card Detail/InforCard";
 import Pomodoro from "./components/Pomodoro/Pomodoro";
 import User from "./components/User/User";
 
@@ -39,7 +39,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/user/:userId" element={<User />} />
-          {/* <Route path="/card" element={<InforCard />} /> */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

@@ -115,7 +115,7 @@ export const topRowColors = [
     '#0079bf', // blue
     '#dc2626', // blue
     '#89609e', // dark blue
-    '#000000ff'  // light purple
+    '#6a7378ff'  // light purple
 ];
 
 // Hàng dưới: 6 màu bổ sung

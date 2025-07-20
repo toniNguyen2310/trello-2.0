@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 import './AddNewColumn.scss'
 import { ImCross } from "react-icons/im";
 import { FaPlus } from "react-icons/fa";
+import useClickOutside from '@utils/customHooks/useClickOutside';
 
 const AddNewColumn = ({ onAddColumn }) => {
   const [adding, setAdding] = useState(false)
@@ -9,23 +10,15 @@ const AddNewColumn = ({ onAddColumn }) => {
   const wrapperRef = useRef(null)
   const inputRef = useRef(null)
 
-  // Detect click outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-        setAdding(false)
-        setNewTitle('')
-      }
-    }
+  useClickOutside({
+    ref: wrapperRef,
+    callback: () => {
+      setAdding(false)
+      setNewTitle('')
+    },
+    active: adding
+  })
 
-    if (adding) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [adding])
 
   const handleAdd = () => {
     const trimmed = newTitle.trim()
@@ -41,7 +34,7 @@ const AddNewColumn = ({ onAddColumn }) => {
       {!adding ? (
         <div className="add-column add-column-title" onClick={() => setAdding(true)}>
           <FaPlus />
-          Thêm danh sách khác
+          Add another list
         </div>
       ) : (
         <div className="add-column form" ref={wrapperRef}>

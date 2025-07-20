@@ -225,7 +225,6 @@ const Column = ({
           }
           localStorage.setItem(`trelloBoard-${column.boardId}`, JSON.stringify(listColumnsRef.current))
           updateCardOrder(dataApi)
-          console.log(dataApi)
         }
       }
 

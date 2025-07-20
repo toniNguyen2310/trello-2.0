@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import './AddNewCard.scss'
-import { ImCross } from "react-icons/im";
 import { FaPlus } from "react-icons/fa";
+import { IoCloseSharp } from "react-icons/io5";
+import useClickOutside from '@utils/customHooks/useClickOutside';
 
 const AddNewCard = ({ column, onAddCard }) => {
   const [adding, setAdding] = useState(false)
@@ -9,27 +10,8 @@ const AddNewCard = ({ column, onAddCard }) => {
   const wrapperRef = useRef(null)
   const inputRef = useRef(null)
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-        handleAdd()
-        setAdding(false)
-      }
-    }
-
-    if (adding) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [adding, cardText])
-
-
   const handleAdd = () => {
     const trimmed = cardText.trim()
-
     if (!trimmed) {
       setCardText('')
       setAdding(false)
@@ -41,11 +23,21 @@ const AddNewCard = ({ column, onAddCard }) => {
     setTimeout(() => inputRef.current?.focus(), 0)
   }
 
+  useClickOutside({
+    ref: wrapperRef,
+    callback: () => {
+      handleAdd()
+      setAdding(false)
+    },
+    active: adding,
+    deps: [cardText]
+  })
+
   return (
     <>
       {!adding ? (
         <div className="add-card add-card-title" onClick={() => setAdding(true)}>
-          <FaPlus /> Thêm thẻ
+          <FaPlus /> Add a card
         </div>
       ) : (
         <div className="add-card form" ref={wrapperRef}>
@@ -58,11 +50,10 @@ const AddNewCard = ({ column, onAddCard }) => {
             autoFocus
           />
           <div className="actions">
-            <button onClick={handleAdd}>Unshift</button>
-            <button onClick={handleAdd}>Push </button>
-            <button className="cancel" onClick={() => setAdding(false)}>
-              <ImCross />
-            </button>
+            <button onClick={handleAdd}>Add Card</button>
+            <div className="cancel" onClick={() => setAdding(false)}>
+              <IoCloseSharp />
+            </div>
           </div>
         </div>
       )}

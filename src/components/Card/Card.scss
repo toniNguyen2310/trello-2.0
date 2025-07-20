@@ -19,18 +19,6 @@
 
   }
 
-  // .infor-container {
-  //   .infor-container-title {
-  //     // background-color: red;
-  //     display: flex;
-  //     gap: 8px;
-  //   }
-
-  //   .infor-container-des {
-  //     background-color: blue;
-  //   }
-  // }
-
   .edit-icon {
     display: flex;
     align-items: center;
@@ -67,6 +55,7 @@
 .card-item:hover {
   background-color: rgb(228, 223, 223);
 }
+
 
 .card {
   background-color: #fff;
@@ -170,7 +159,7 @@
 
   .edit-textarea {
     width: 100%;
-    min-height: 60px;
+    // min-height: 60px;
     padding: 8px 12px;
     border: 2px solid #000000;
     border-radius: 6px;
@@ -207,7 +196,7 @@
       font-size: 12px;
       font-weight: 500;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: opacity 0.2s ease;
       font-weight: 600;
     }
 

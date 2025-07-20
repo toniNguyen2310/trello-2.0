@@ -3,8 +3,9 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
 import { BiSolidUser } from "react-icons/bi";
 import './AppHeader.scss'
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@contexts/AuthContext'
+import useClickOutside from '@utils/customHooks/useClickOutside';
 
 const AppHeader = () => {
   const navigate = useNavigate()
@@ -12,6 +13,7 @@ const AppHeader = () => {
   const { user } = useAuth()
   const { logoutContext, appBarColor, setAppBarColor } = useAuth()
   const location = useLocation()
+  const dropdownRef = useRef(null);
 
 
   const handleLogout = () => {
@@ -24,6 +26,7 @@ const AppHeader = () => {
   const getFirstLetter = (name) => {
     return name?.charAt(0)?.toUpperCase() || 'U';
   };
+
   const isValidUser = (user) => {
     return user && Object.keys(user).length > 0 && user.username;
   };
@@ -35,6 +38,28 @@ const AppHeader = () => {
     }
     // Nếu là /board thì màu sẽ được set bên trong Board.jsx
   }, [location.pathname])
+
+  // useEffect(() => {
+  //   const handleClickOutside = (e) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+  //       setIsOpen(false);
+  //     }
+  //   };
+  //   if (isOpen) {
+  //     document.addEventListener('mousedown', handleClickOutside);
+  //   }
+
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [isOpen]);
+  useClickOutside({
+    ref: dropdownRef,
+    active: isOpen,
+    callback: () => setIsOpen(false)
+  })
+
+
 
   return (
     <div className="app-header" style={{
@@ -50,8 +75,10 @@ const AppHeader = () => {
 
       {isValidUser(user) ?
         <div className='app-header-authen'
+          ref={dropdownRef}
           onClick={() => setIsOpen(true)}
-        >   {getFirstLetter(user.username)}
+        >
+          {getFirstLetter(user.username)}
           {isOpen && (
             <div className="drop-down">
               <div

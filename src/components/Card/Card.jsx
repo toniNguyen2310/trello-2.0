@@ -62,13 +62,15 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
   }
 
 
-  // Click outside để đóng form
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       const clickedCardId = e.target.closest('[data-card-id]')?.dataset?.cardId
       const isOutside = wrapperRef.current && !wrapperRef.current.contains(e.target)
+      const isInPopconfirm = e.target.closest('.ant-popover-content');
+      const isEditIcon = e.target.closest('.edit-icon');
 
-      if (isEditing && clickedCardId !== card.id && isOutside) {
+      if (isEditing && clickedCardId !== card.id && isOutside && !isInPopconfirm && !isEditIcon) {
         setIsEditing(false)
       }
     }

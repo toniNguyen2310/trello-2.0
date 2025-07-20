@@ -60,7 +60,7 @@
                 border-radius: 6px;
                 font-size: 14px;
                 font-weight: 500;
-                cursor: pointer;
+
                 border: none;
                 transition: all 0.2s ease;
             }
@@ -68,6 +68,7 @@
             .btn-secondary {
                 background-color: #f4f5f7;
                 color: #333;
+                cursor: pointer;
 
                 &:hover {
                     background-color: #e1e2e6;
@@ -77,6 +78,7 @@
             .btn-primary {
                 background-color: #0079bf;
                 color: #fff;
+                cursor: not-allowed;
 
                 &:hover {
                     background-color: #026aa7;

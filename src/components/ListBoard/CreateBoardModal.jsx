@@ -7,6 +7,7 @@ import { useAuth } from '@contexts/AuthContext';
 import { message } from "antd";
 import { createBoardAPI } from 'service/apis';
 import { useNavigate } from 'react-router-dom';
+import useClickOutside from '@utils/customHooks/useClickOutside';
 
 const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
   const [selectedBackground, setSelectedBackground] = useState(0);
@@ -14,6 +15,15 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
   const [showError, setShowError] = useState(false);
   const [showMoreColors, setShowMoreColors] = useState(false);
   const { user } = useAuth()
+  const modalRef = useRef(null);
+  useClickOutside({
+    ref: modalRef,
+    active: isOpen,
+    callback: () => {
+      resetForm();
+      setIsOpen(false);
+    }
+  });
 
   const navigate = useNavigate();
 
@@ -41,8 +51,8 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
       const res = await createBoardAPI(newBoard);
       message.success("Tạo bảng thành công!");
       console.log("Board created:", res);
+      resetForm();
       navigate(`/board/${res.board._id}`)
-
     } catch (error) {
       message.error("Lỗi khi tạo bảng");
       console.error(error);
@@ -56,17 +66,28 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
     }
   };
 
+  const resetForm = () => {
+    setSelectedBackground(0);
+    setBoardTitle('');
+    setShowError(false);
+    setShowMoreColors(false);
+  };
+
 
   return (
     <>{isOpen && isOpen &&
-      <div className="modal" style={{
+      <div className="modal" ref={modalRef} style={{
         left: '1%',
       }}>
+
         <div className="modal-header">
           <h2 className="modal-title">Create board</h2>
           <div
             className="close-btn"
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              resetForm();
+              setIsOpen(false);
+            }}
           >
             <IoMdClose />
           </div>
@@ -169,6 +190,7 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
             )}
           </div>
         </div>
+
         <div className='button-create' onClick={(e) => handleSubmit(e)}>Create</div>
       </div>
     }

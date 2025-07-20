@@ -33,16 +33,13 @@ html,
     padding: 0 20px;
     background-color: $background-header-board-color;
     color: white;
-
+    box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.35);
 
     .board-title {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      // padding: 0px 10px;
-
       height: 30px;
-      // background-color: #fff;
       width: 100%;
 
       .title-name {
@@ -50,7 +47,7 @@ html,
         font-weight: bold;
         cursor: pointer;
         border-radius: 5px;
-        padding: 5px;
+        padding: 5px 8px;
       }
 
       .title-name:hover {
@@ -58,17 +55,19 @@ html,
       }
 
       input {
+        width: fit-content;
         font-size: 18px;
-        padding: 4px 8px;
+        padding: 2px 5px;
         border-radius: 4px;
         border: none;
         outline: none;
         font-weight: bold;
         color: black;
+        // background-color: red;
       }
 
       input:focus {
-        border: 3px solid $primary-color;
+        border: 1px solid $primary-color;
         box-shadow: 0 0 0 2px $primary-color;
       }
 
@@ -108,7 +107,6 @@ html,
     width: 100%;
     height: 100%;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-    // box-sizing: border-box;
     background: $background-color;
 
   }

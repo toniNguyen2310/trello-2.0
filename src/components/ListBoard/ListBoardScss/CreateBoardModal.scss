@@ -33,11 +33,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     position: relative;
 
     .modal-title {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 600;
         color: #172b4d;
         margin: 0;
@@ -46,7 +46,6 @@
     .close-btn {
         position: absolute;
         right: 0;
-        // top: 2%;
         background: none;
         border: none;
         cursor: pointer;
@@ -122,10 +121,11 @@
     box-sizing: border-box;
 
     .section-title {
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: bold;
         color: #172b4d;
-
+        text-align: left;
+        margin-bottom: 5px;
     }
 
     .background-options {
@@ -213,10 +213,11 @@
 
         .form-label {
             display: block;
-            font-size: 14px;
-            font-weight: 600;
             color: #172b4d;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: left;
 
             .required {
                 color: #de350b;

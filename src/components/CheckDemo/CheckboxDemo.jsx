@@ -57,12 +57,8 @@ const TrelloCheckbox = ({
 };
 
 // Demo component with 2-3 checkboxes
-const CheckboxDemo = () => {
-    const [tasks, setTasks] = useState([
-        { id: 1, text: "Complete project documentation", checked: false },
-        { id: 2, text: "Review code changes", checked: false },
-        { id: 3, text: "Update team on progress", checked: false }
-    ]);
+const CheckboxDemo = ({ checklist }) => {
+    const [tasks, setTasks] = useState(checklist);
 
     const handleTaskChange = (id, checked) => {
         setTasks(prevTasks =>
@@ -77,7 +73,7 @@ const CheckboxDemo = () => {
     return (
         <div className="demo-container">
             <h2 className="demo-title">
-                Tasks to Complete
+                Checklist
             </h2>
 
             <div className="tasks-list">
@@ -93,17 +89,18 @@ const CheckboxDemo = () => {
             </div>
 
             <div className="progress-section">
-                <div className="progress-info">
-                    <span>Progress:</span>
-                    <span className="progress-count">{completedCount}/{tasks.length} completed</span>
-                </div>
-
                 <div className="progress-bar">
                     <div
                         className="progress-bar__fill"
                         style={{ width: `${(completedCount / tasks.length) * 100}%` }}
                     />
                 </div>
+                <div className="progress-info">
+                    <span>Progress:</span>
+                    <span className="progress-count">{completedCount}/{tasks.length} completed</span>
+                </div>
+
+
             </div>
         </div>
     );

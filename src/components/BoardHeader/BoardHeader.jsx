@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react'
 import { deleteBoardById, updateBoardTitle } from 'service/apis'
 import { IoIosMore } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
+import { Popconfirm } from 'antd';
+import useClickOutside from '@utils/customHooks/useClickOutside';
 
 const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
   const [boardName, setBoardName] = useState(board.title)
@@ -26,7 +28,7 @@ const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
     }
   }
 
-  const deleteBoard = async (e) => {
+  const deleteBoard = async () => {
     try {
       const dataDelete = {
         boardId: board._id,
@@ -39,26 +41,17 @@ const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
     }
   }
 
-  // Xử lý click ngoài để đóng ô input
-  useEffect(() => {
-    const handleClickOutside = async (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-        if (tempName.trim()) {
-          handleUpdateBoardTitle()
-        }
-        setEditing(false)
+  useClickOutside({
+    ref: wrapperRef,
+    active: editing,
+    deps: [tempName],
+    callback: async () => {
+      if (tempName.trim()) {
+        await handleUpdateBoardTitle()
       }
+      setEditing(false)
     }
-
-    if (editing) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [editing, tempName])
-
+  })
 
   return (
     <div className="board-header" style={{ background: colorOb.darker1 }}>
@@ -78,8 +71,18 @@ const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
             autoFocus
           />
         )}
-        <div className='delete-board' onClick={(e) => deleteBoard(e)}><IoIosMore />
-        </div>
+        <Popconfirm
+          placement="left"
+          title="Delete the board"
+          description="Are you sure?"
+          okText="Yes"
+          cancelText="No"
+          onConfirm={deleteBoard}
+        >
+          <div className='delete-board'><IoIosMore />
+          </div>
+        </Popconfirm>
+
       </div>
     </div>
   )
