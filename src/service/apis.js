@@ -41,19 +41,31 @@ export const deleteBoardById = ({ boardId, userId }) => {
     return axiosInstance.delete(`/boards/${boardId}`, { data: { userId: userId } })
 }
 
+export const updateColumnOderBoard = ({ boardId, columnOrder }) => {
+    return axiosInstance.put(`/boards/${boardId}/column-order`, { columnOrder })
+}
+
 //USER
 export const getUserDetail = (id) => {
     return axiosInstance.get(`/users/${id}`)
 }
 
 //COLUMN
-export const createColumnAPI = async (data) => {
-    const res = await axiosInstance.post("/columns", data);
-    return res;
+export const createColumnAPI = (data) => {
+    axiosInstance.post("/columns", data);
 };
+
 export const deleteColumnApiById = ({ columnId }) => {
     axiosInstance.delete(`/columns/${columnId}`);
 
+};
+
+export const updateTitleColumnApi = ({ columnId, title }) => {
+    axiosInstance.put(`/columns/title/${columnId}`, { title })
+};
+
+export const updateCardOrder = (data) => {
+    axiosInstance.put(`/columns/update-card-order`, data)
 };
 
 //CARD

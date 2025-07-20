@@ -6,7 +6,7 @@ import ColumnTitle from './ColumnTitle'
 import { cloneColumn, createGhostCardOrColumn, resetDataDrag, sortOrder, updateColumnsInRef } from '../../utils/constants'
 import { v4 as uuidv4 } from 'uuid'
 import { useNavigate } from 'react-router-dom';
-import { createCardAPI } from 'service/apis'
+import { createCardAPI, updateCardOrder, updateTitleColumnApi } from 'service/apis'
 
 const Column = ({
   columnProps,
@@ -21,7 +21,6 @@ const Column = ({
   const [column, setColumn] = useState(columnProps)
   const [cards, setCards] = useState(sortOrder(columnProps.cards, columnProps.cardOrder, 'id'))
   const cardsWrapperRef = useRef(null)
-  const navigate = useNavigate();
 
   //Handle Add New Card
   const handleAddCard = (cardText) => {
@@ -72,7 +71,8 @@ const Column = ({
       return col
     })
     listColumnsRef.current.columns = updatedColumns
-    localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+    localStorage.setItem(`trelloBoard-${column.boardId}`, JSON.stringify(listColumnsRef.current))
+    updateTitleColumnApi({ columnId: column.id, title: newTitle })
   }
 
 
@@ -125,8 +125,9 @@ const Column = ({
 
       // Trả về 2 bản clone riêng biệt để tránh reference lỗi
       let newSourceCol = cloneColumn(newCol)
+      let newTargetCol = cloneColumn(newCol)
       listColumnsRef.current = updateColumnsInRef(listColumnsRef.current, newSourceCol);
-      return [newSourceCol, null];
+      return [newSourceCol, newTargetCol];
     }
 
     // === CASE 2: KHÁC CỘT 
@@ -199,6 +200,14 @@ const Column = ({
             isInsertEnd
           );
 
+          const dataApi = {
+            cardId: sourceCardId,
+            sourceColumnId: sourceCol.id,
+            targetColumnId: targetCol.id,
+            sourceCardOrder: newSourceCol.cardOrder,
+            targetCardOrder: newTargetCol.cardOrder
+          }
+
           if (sourceCol.id === targetCol.id) {
             if (column.id === newSourceCol.id) {
               setCards([...newSourceCol.cards]);
@@ -209,12 +218,14 @@ const Column = ({
               setCards([...newSourceCol.cards]);
               setColumn({ ...newSourceCol });
             }
-            if (column.id === targetCol.id) {
+            else if (column.id === targetCol.id) {
               setCards([...newTargetCol.cards]);
               setColumn({ ...newTargetCol });
             }
           }
-          localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+          localStorage.setItem(`trelloBoard-${column.boardId}`, JSON.stringify(listColumnsRef.current))
+          updateCardOrder(dataApi)
+          console.log(dataApi)
         }
       }
 

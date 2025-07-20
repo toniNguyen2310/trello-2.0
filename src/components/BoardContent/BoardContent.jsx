@@ -5,7 +5,7 @@ import AddNewColumn from '../AddNewColumn/AddNewColumn'
 import { resetDataDrag, sortOrder } from '../../utils/constants'
 import { swapColumnsInRef } from '../../utils/swapColumnsInRef '
 import { v4 as uuidv4 } from 'uuid'
-import { createColumnAPI, deleteColumnApiById } from 'service/apis'
+import { createColumnAPI, deleteColumnApiById, updateColumnOderBoard } from 'service/apis'
 
 
 const BoardContent = ({ board, colorOb, listColumnsRef }) => {
@@ -19,7 +19,7 @@ const BoardContent = ({ board, colorOb, listColumnsRef }) => {
     if (board?.columns && board?.columnOrder) {
       const sorted = sortOrder(board.columns, board.columnOrder, 'id')
       setColumns(sorted)
-      console.log('boardReset>> ', board)
+      console.log('boardcontent >>> ', board)
     }
   }, [board])
 
@@ -60,7 +60,6 @@ const BoardContent = ({ board, colorOb, listColumnsRef }) => {
     deleteColumnApiById({ columnId: columnId })
   }
 
-
   // --- MOUSE UP: swap column nếu đang kéo column ---
   useEffect(() => {
     const handleMouseUpColumn = (e) => {
@@ -82,11 +81,15 @@ const BoardContent = ({ board, colorOb, listColumnsRef }) => {
         resetDataDrag(dragStartRef, dragEndRef, distanceXFirst, distanceYFirst);
         return
       }
-
       // Swap trong ref và cập nhật state
       swapColumnsInRef(listColumnsRef, sourceColumnId, targetColumnId)
       setColumns([...listColumnsRef.current.columns])
-      localStorage.setItem('trelloBoard', JSON.stringify(listColumnsRef.current))
+      localStorage.setItem(`trelloBoard-${board._id}`, JSON.stringify(listColumnsRef.current))
+
+      updateColumnOderBoard({
+        boardId: board._id,
+        columnOrder: listColumnsRef.current.columnOrder
+      })
       resetDataDrag(dragStartRef, dragEndRef, distanceXFirst, distanceYFirst);
     }
 

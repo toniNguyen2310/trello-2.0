@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 export const useSmartPosition = (ref) => {
-    const [position, setPosition] = useState('right'); // 'left' or 'right'
+    const [position, setPosition] = useState(''); // 'left' or 'right'
 
     useEffect(() => {
         const updatePosition = () => {
@@ -10,8 +10,11 @@ export const useSmartPosition = (ref) => {
             const screenWidth = window.innerWidth;
 
             if (rect.left < screenWidth / 2) {
+                console.log('R')
                 setPosition('right');
             } else {
+                console.log('L')
+
                 setPosition('left');
             }
         };
@@ -22,7 +25,7 @@ export const useSmartPosition = (ref) => {
         return () => {
             window.removeEventListener('resize', updatePosition);
         };
-    }, [ref]);
+    }, []);
 
     return position;
 };

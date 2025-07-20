@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IoMdClose } from "react-icons/io";
 import './ListBoardScss/CreateBoardModal.scss';
 import { IoIosArrowDown } from "react-icons/io";
@@ -7,7 +7,6 @@ import { useAuth } from '@contexts/AuthContext';
 import { message } from "antd";
 import { createBoardAPI } from 'service/apis';
 import { useNavigate } from 'react-router-dom';
-import { useSmartPosition } from '@utils/customHooks/useSmartPosition';
 
 const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
   const [selectedBackground, setSelectedBackground] = useState(0);
@@ -33,7 +32,6 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
     }
     setShowError(false);
     // Handle form submission here
-    console.log('NAME:', boardTitle, 'Background:', getSelectedColor(selectedBackground));
     try {
       const newBoard = {
         title: boardTitle.trim(),
@@ -44,8 +42,7 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
       message.success("Tạo bảng thành công!");
       console.log("Board created:", res);
       navigate(`/board/${res.board._id}`)
-      // setIsOpen(false)
-      // TODO: redirect hoặc cập nhật UI
+
     } catch (error) {
       message.error("Lỗi khi tạo bảng");
       console.error(error);
@@ -59,11 +56,11 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
     }
   };
 
+
   return (
     <>{isOpen && isOpen &&
       <div className="modal" style={{
-        left: position === 'right' ? '105%' : '0',
-        right: position === 'left' ? '105%' : '0',
+        left: '1%',
       }}>
         <div className="modal-header">
           <h2 className="modal-title">Create board</h2>

@@ -18,10 +18,9 @@ const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
       }
       setBoardName(tempName.trim() || boardName)
       setEditing(false)
-      await updateBoardTitle(data)
       listColumnsRef.current.title = tempName.trim()
       localStorage.setItem(`trelloBoard-${board._id}`, JSON.stringify(listColumnsRef.current))
-
+      await updateBoardTitle(data)
     } catch (err) {
       console.error('Lỗi update title board:', err)
     }

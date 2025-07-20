@@ -10,9 +10,7 @@ const BoardCard = ({ board }) => {
     const [isOpen, setIsOpen] = useState(false);
     const cardRef = useRef(null);
     const position = useSmartPosition(cardRef);
-    useEffect(() => {
-        console.log('position>>> ', position)
-    }, [])
+
     return (
         <>
             {board && board.new ?

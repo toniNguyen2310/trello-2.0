@@ -27,7 +27,10 @@ function Board() {
                     cached = JSON.parse(cachedStr)
                     setBoard(cached) // Render tạm thời từ localStorage
                     listColumnsRef.current = cached
+                    console.log('cung DU LIEU')
+
                 }
+
                 // Bước 2: Gọi API để lấy dữ liệu mới
                 const fresh = await getBoardFullData(boardId)
                 // Nếu khác với cache thì cập nhật
