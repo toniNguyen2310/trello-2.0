@@ -10,6 +10,9 @@
             ],
             "@components/*": [
                 "components/*"
+            ],
+            "@styles/*": [
+                "styles/*"
             ]
         }
     },

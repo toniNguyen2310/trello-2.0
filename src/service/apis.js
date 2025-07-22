@@ -81,6 +81,10 @@ export const updateCardTitleById = ({ cardId, title }) => {
     return axiosInstance.put(`/cards/${cardId}/title`, { title: title })
 }
 
+export const updateDetailCardById = ({ cardId, data }) => {
+    return axiosInstance.put(`/cards/${cardId}/detail`, data)
+}
+
 export const getCardDetail = (id) => {
     return axiosInstance.get(`/cards/${id}`)
 }

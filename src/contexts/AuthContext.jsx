@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react"
 import { getInfoUserLocal, passLocalStorage } from "@utils/passLocalStorage"
 import { KEY_INFO_USER } from "@utils/constants"
 import { useNavigate } from "react-router-dom"
+import { LS_KEY } from "@utils/customHooks/useBoardsWithCache"
 
 const AuthContext = createContext()
 
@@ -25,13 +26,14 @@ export const AuthProvider = ({ children }) => {
     const logoutContext = () => {
         setUser({})
         passLocalStorage.removeItem(KEY_INFO_USER)
-        // navigate("/login")
+
     }
 
     useEffect(() => {
         const userLocal = getInfoUserLocal()
-        if (userLocal) setUser(userLocal)
-
+        if (userLocal) {
+            setUser(userLocal)
+        }
     }, [])
 
     return (

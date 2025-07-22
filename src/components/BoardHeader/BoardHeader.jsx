@@ -35,6 +35,7 @@ const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
         userId: board.ownerId
       }
       await deleteBoardById(dataDelete)
+      localStorage.removeItem(`trelloBoard-${board._id}`);
       navigate('/')
     } catch (err) {
       console.error('Lỗi update title board:', err)

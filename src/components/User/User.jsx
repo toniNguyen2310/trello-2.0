@@ -15,6 +15,7 @@ function User() {
             if (!user?._id) return
             try {
                 const userApi = await getUserDetail(userId)
+                console.log('userApi>> ', userApi)
                 // So sánh nếu khác thì cập nhật
                 if (!isEqual(user, userApi)) {
                     setUser(userApi)

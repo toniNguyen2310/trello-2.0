@@ -3,10 +3,11 @@ import { useParams } from 'react-router-dom'
 import { IoCloseSharp } from "react-icons/io5";
 import './InforCard.scss'
 import { useNavigate } from 'react-router-dom';
-import { getCardDetail } from 'service/apis';
+import { getCardDetail, updateDetailCardById } from 'service/apis';
 import _ from 'lodash';
 import { LuChartNoAxesColumnDecreasing } from "react-icons/lu";
-import CheckboxDemo from '@components/CheckDemo/CheckboxDemo';
+import Checklist from '@components/Checklist/Checklist';
+import LoadingComponent from '@components/LoadingComponent/LoadingComponent ';
 
 const InforCard = () => {
     const { boardId, id } = useParams()
@@ -17,51 +18,42 @@ const InforCard = () => {
         description: '',
         checklist: []
     });
-    const checklist = [
-        { id: 1, text: "Học bảng Pinyin (âm đầu, âm cuối, thanh điệu)", checked: true },
-        { id: 2, text: "Học 150 từ vựng HSK 1", checked: false },
-        { id: 3, text: "Ôn tập và làm quiz", checked: false },
-    ];
-
     const [metaFields, setMetaFields] = useState({
         columnTitle: '',
         status: false,
         columnId: ''
     });
-    useEffect(() => {
-        console.log('editableFields>> ', editableFields)
-        console.log('metaFields>> ', metaFields)
-    }, [editableFields, metaFields])
-
+    const [originalData, setOriginalData] = useState(null);
 
     const closeModal = () => {
-        navigate(-1);
+        navigate(`/board/${boardId}`);
+        setEditableFields(originalData);
     };
 
-    const handleSave = () => { };
-    const handleCancel = () => { };
+    const handleSave = (e) => {
+        const hasChanges = !_.isEqual(editableFields, originalData);
 
-    // const findCardWithColumnTitle = (board, cardId) => {
-    //     for (const column of board.columns) {
-    //         const card = column.cards.find((c) => c.id === cardId)
-    //         if (card) {
-    //             return {
-    //                 id: card.id,
-    //                 columnTitle: column.title,
-    //                 status: card.status,
-    //                 description: card.description,
-    //                 title: card.title,
-    //                 columnId: card.columnId
-    //             }
-    //         }
-    //     }
-    //     return null
-    // }
+        if (hasChanges) {
+            try {
+                localStorage.setItem(`card-${id}`, JSON.stringify({
+                    id,
+                    ...editableFields,
+                    ...metaFields
+                }));
+                updateDetailCardById({ cardId: id, data: editableFields })
+                setOriginalData(editableFields); // cập nhật dữ liệu gốc
+                closeModal(); // tắt modal
+            } catch (err) {
+                console.error('Lỗi khi lưu card:', err);
+            }
+        } else {
+            closeModal();
+        }
+    };
 
     useEffect(() => {
         const fetchCardDetail = async () => {
             setLoading(true);
-
             try {
                 const cachedCard = JSON.parse(localStorage.getItem(`card-${id}`) || 'null');
                 if (cachedCard && cachedCard.id) {
@@ -71,14 +63,17 @@ const InforCard = () => {
                         description: cachedCard.description,
                         checklist: cachedCard.checklist
                     });
-
                     setMetaFields({
                         columnTitle: cachedCard.columnTitle,
                         status: cachedCard.status,
                         columnId: cachedCard.columnId
                     });
+                    setOriginalData({
+                        title: cachedCard.title,
+                        description: cachedCard.description,
+                        checklist: cachedCard.checklist
+                    });
                 }
-
 
                 const cardApi = await getCardDetail(id);
                 console.log(cardApi)
@@ -86,13 +81,18 @@ const InforCard = () => {
                     setEditableFields({
                         title: cardApi.title,
                         description: cardApi.description,
-                        checklistOrder: cardApi.checklistOrder
+                        checklist: cardApi.checklist
                     });
 
                     setMetaFields({
                         columnTitle: cardApi.columnTitle,
                         status: cardApi.status,
                         columnId: cardApi.columnId
+                    });
+                    setOriginalData({
+                        title: cardApi.title,
+                        description: cardApi.description,
+                        checklist: cardApi.checklist
                     });
                     localStorage.setItem(`card-${id}`, JSON.stringify(cardApi));
                 }
@@ -114,16 +114,11 @@ const InforCard = () => {
         fetchCardDetail()
     }, [id, boardId, navigate])
 
-
-
     if (loading) {
         return (
-            <div className="modal-overlay">
-                <div className="modal-content loading">Loading...</div>
-            </div>
+            <LoadingComponent />
         );
     }
-
 
     return (
         <>
@@ -146,6 +141,7 @@ const InforCard = () => {
                         <div className="body-section">
                             <label className="title-label">Title</label>
                             <input className="title-input"
+                                type="text"
                                 value={editableFields.title}
                                 onChange={(e) => setEditableFields({ ...editableFields, title: e.target.value })}
                             />
@@ -155,6 +151,7 @@ const InforCard = () => {
                         <div className="body-section">
                             <label className="title-label">Description </label>
                             <textarea
+                                type="text"
                                 value={editableFields.description}
                                 onChange={(e) => setEditableFields({ ...editableFields, description: e.target.value })}
                                 className="title-textarea"
@@ -163,19 +160,21 @@ const InforCard = () => {
                             />
                         </div>
 
-                        {/* Select */}
-
-                        <CheckboxDemo checklist={checklist} />
-
+                        <Checklist checklist={editableFields.checklist} onChange={(newChecklist) =>
+                            setEditableFields(prev => ({
+                                ...prev,
+                                checklist: newChecklist
+                            }))
+                        } />
 
                     </div>
 
                     {/* FOOTER */}
                     <div className="modal-footer">
-                        <button onClick={handleCancel} className="cancel-button">
+                        <button onClick={closeModal} className="cancel-button">
                             Cancel
                         </button>
-                        <button onClick={handleSave} className="save-button">
+                        <button onClick={(e) => handleSave(e)} className="save-button">
                             Save
                         </button>
                     </div>

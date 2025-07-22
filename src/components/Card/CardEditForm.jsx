@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Popconfirm } from 'antd';
 
-const CardEditForm = ({ card, title, onClose, onSave, onDelete }) => {
+const CardEditForm = ({ card, title, onSave, onDelete }) => {
     const [value, setValue] = useState(title)
     const textareaRef = useRef(null)
     const navigate = useNavigate();

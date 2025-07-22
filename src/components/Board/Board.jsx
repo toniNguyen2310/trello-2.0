@@ -7,6 +7,7 @@ import { getBoardFullData } from 'service/apis';
 import isEqual from 'lodash/isEqual'
 import { useColorVariants } from '@utils/customHooks/useColorVariants';
 import { useAuth } from '@contexts/AuthContext';
+import LoadingComponent from '@components/LoadingComponent/LoadingComponent ';
 
 function Board() {
     const { boardId } = useParams()
@@ -53,10 +54,11 @@ function Board() {
         }
     }, [board, colorOb])
 
-    if (loading) return <div>Đang tải...</div>
+    if (loading) return <LoadingComponent />
     if (!board) return <div>Bảng không tồn tại</div>
     return (
         <>
+            {/* <LoadingComponent /> */}
             <BoardHeader board={board} colorOb={colorOb} listColumnsRef={listColumnsRef} />
             <BoardContent board={board} colorOb={colorOb} listColumnsRef={listColumnsRef} />
             <Outlet />

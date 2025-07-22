@@ -2,6 +2,7 @@ import axios from "axios";
 
 // Base URL từ file `.env`
 const baseURL = import.meta.env.VITE_BACKEND_URL;
+// const baseURL = import.meta.env.VITE_BACKEND_URL_DEPLOY;
 const instance = axios.create({
     baseURL: baseURL + "/api/",
 });

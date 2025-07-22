@@ -1,8 +1,5 @@
 export const KEY_INFO_USER = "info_user"
 
-
-
-
 export const generateId = () => Date.now().toString()
 //Sort array order
 export const sortOrder = (array, order, key) => {

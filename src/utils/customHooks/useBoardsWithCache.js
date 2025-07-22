@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { getBoardsByUser } from 'service/apis'
 import { isEqual } from 'lodash'
 
-const LS_KEY = 'cachedBoards'
+export const LS_KEY = 'cachedBoards'
 
 export const useBoardsWithCache = (userId) => {
     const [boards, setBoards] = useState([])

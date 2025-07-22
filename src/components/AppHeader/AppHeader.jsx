@@ -6,6 +6,8 @@ import './AppHeader.scss'
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@contexts/AuthContext'
 import useClickOutside from '@utils/customHooks/useClickOutside';
+import { passLocalStorage } from '@utils/passLocalStorage';
+import { LS_KEY } from '@utils/customHooks/useBoardsWithCache';
 
 const AppHeader = () => {
   const navigate = useNavigate()
@@ -19,7 +21,13 @@ const AppHeader = () => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    logoutContext(); // xóa user trong context
+    passLocalStorage.removeItem(LS_KEY);
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('trelloBoard-')) {
+        localStorage.removeItem(key);
+      }
+    });
+    logoutContext();
     navigate("/login");
   };
 

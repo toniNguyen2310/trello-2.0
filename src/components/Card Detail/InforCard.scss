@@ -69,17 +69,15 @@
         .modal-body {
             padding: 0 20px;
 
-
             .body-section {
                 display: flex;
                 flex-direction: column;
                 margin-bottom: 20px;
                 gap: 4px;
                 color: #000;
-                // background-color: blue;
 
                 .title-label {
-                    font-size: 16px;
+                    font-size: 14px;
                     display: flex;
                     font-weight: 600;
                     margin-left: 2px;
@@ -89,25 +87,21 @@
                     font-size: 18px;
                     font-weight: 600;
                     color: #1f2937;
-                    border: 3px solid transparent;
                     outline: none;
                     border-radius: 8px;
-                    padding: 8px 10px;
+                    padding: 5px 10px;
                     transition: border 0.2s ease-in-out;
-                    border: 2px solid #dcdfe4;
-
+                    border: 2px solid #f1eded;
                 }
 
                 .title-textarea {
-                    // font-size: 18px;
-                    // font-weight: 600;
                     color: #1f2937;
                     border: 3px solid transparent;
                     outline: none;
                     border-radius: 8px;
                     padding: 10px 12px;
                     transition: border 0.5s ease-in-out;
-                    border: 2px solid #dcdfe4;
+                    border: 2px solid #f1eded;
                     resize: vertical;
                     font-family: inherit;
                 }
@@ -122,7 +116,6 @@
         }
 
         .modal-footer {
-            // background-color: red;
             padding: 10px 20px;
             display: flex;
             align-items: center;
@@ -161,7 +154,6 @@
                 }
             }
         }
-
     }
 }
 
