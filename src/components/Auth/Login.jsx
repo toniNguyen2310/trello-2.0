@@ -11,12 +11,13 @@ import { message } from "antd";
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { loginContext } = useAuth()
+    const { loginContext } = useAuth();
+    const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setIsLoading(true)
         const data = {
             email: email.trim(),
             password: password.trim(),
@@ -41,6 +42,8 @@ const LoginForm = () => {
             const errorMsg = err?.message || "Đăng nhập thất bại!";
             message.error(errorMsg);
             console.error("Login error:", err);
+        } finally {
+            setIsLoading(false)
         }
     };
 
@@ -68,7 +71,11 @@ const LoginForm = () => {
                     placeholder="●●●●●●●●"
                 />
 
-                <ButtonForm text="Log in →" />
+                <ButtonForm
+                    text="Log in →"
+                    disabled={isLoading}
+                    loading={isLoading}
+                />
 
                 <div className="redirect">
                     <span>Don’t have an account?</span> <Link to="/signup">Sign up now!</Link>

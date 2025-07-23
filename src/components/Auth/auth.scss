@@ -75,8 +75,8 @@
 
     .main-button {
         width: 100%;
-        padding: 14px;
-        font-size: 16px;
+        padding: 10px;
+        // font-size: 20px;
         background-color: #1a73e8;
         color: white;
         border: none;
@@ -84,10 +84,22 @@
         font-weight: bold;
         margin-top: 24px;
         cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
 
-        &:hover {
-            background-color: #155fca;
+        &:disabled {
+            opacity: 0.8; // Nút mờ hơn
+            cursor: not-allowed; // Hiển thị con trỏ bị khoá
         }
+
+
+    }
+
+    .main-button:not(:disabled):hover {
+        background-color: #1059c6;
     }
 
     .redirect {
@@ -108,6 +120,19 @@
             a {
                 color: #155fca;
             }
+        }
+    }
+
+    .loading-spin {
+        .ant-spin-dot-item {
+            background-color: #ffffff !important;
+        }
+
+
+
+        .anticon-loading {
+            font-size: 24px !important;
+            color: #ffffff !important;
         }
     }
 

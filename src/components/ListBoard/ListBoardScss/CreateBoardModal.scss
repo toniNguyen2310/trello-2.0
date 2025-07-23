@@ -267,11 +267,34 @@
     cursor: pointer;
     opacity: 1;
     transition: opacity 0.2s ease;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 
-}
+    &.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
 
-.button-create:hover {
-    opacity: 0.8;
+    .loading-spin {
+        .ant-spin-dot-item {
+            background-color: #ffffff !important;
+        }
+
+
+
+        .anticon-loading {
+            font-size: 24px !important;
+            color: #ffffff !important;
+        }
+    }
+
+    &:not(.disabled):hover {
+        opacity: 0.8;
+    }
+
 }
 
 // Responsive design

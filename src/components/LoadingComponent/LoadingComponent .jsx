@@ -1,7 +1,7 @@
 import React from 'react';
 import { Spin } from 'antd';
 import './LoadingComponent.scss';
-import { LoadingOutlined, SettingFilled, } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const LoadingComponent = () => {
     return (

@@ -16,6 +16,7 @@ function Signup() {
         email: '',
         password: '',
     });
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,12 +25,12 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true)
         const data = Object.fromEntries(
             Object.entries(formData).map(([key, value]) =>
                 [key, typeof value === "string" ? value.trim() : value]
             )
         )
-
 
         try {
             const res = await signupAPI(data);
@@ -47,6 +48,8 @@ function Signup() {
             const errMsg =
                 err?.message || "Đăng ký thất bại!";
             message.error(errMsg);
+        } finally {
+            setIsLoading(false)
         }
 
     };
@@ -82,7 +85,11 @@ function Signup() {
                     placeholder="●●●●●●●●"
                 />
 
-                <ButtonForm text="Sign up →" />
+                <ButtonForm
+                    text="Sign up →"
+                    disabled={isLoading}
+                    loading={isLoading} />
+
                 <div className="redirect">
                     <span> Already have an account?</span> <Link to="/login">Log in now!</Link>
                     <div className="or-back">

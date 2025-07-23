@@ -2,7 +2,7 @@ import { useAuth } from '@contexts/AuthContext'
 import './User.scss'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getUserDetail } from 'service/apis'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { isEqual } from 'lodash'
 import LoadingComponent from '@components/LoadingComponent/LoadingComponent '
 
@@ -10,6 +10,7 @@ function User() {
     const navigate = useNavigate()
     const { user, setUser } = useAuth()
     const { userId } = useParams()
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -21,6 +22,8 @@ function User() {
                 }
             } catch (err) {
                 navigate('/not-found');
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -28,7 +31,7 @@ function User() {
     }, [user?._id])
 
 
-    if (!user) return <LoadingComponent />
+    if (loading) return <LoadingComponent />
 
     const formattedDate = new Date(user.createdAt).toLocaleDateString('vi-VN', {
         timeZone: 'Asia/Ho_Chi_Minh'

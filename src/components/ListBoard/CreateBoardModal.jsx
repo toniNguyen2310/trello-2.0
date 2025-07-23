@@ -8,6 +8,7 @@ import { message } from "antd";
 import { createBoardAPI } from 'service/apis';
 import { useNavigate } from 'react-router-dom';
 import useClickOutside from '@utils/customHooks/useClickOutside';
+import { Spin } from 'antd';
 
 const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
   const [selectedBackground, setSelectedBackground] = useState(0);
@@ -16,6 +17,7 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
   const [showMoreColors, setShowMoreColors] = useState(false);
   const { user } = useAuth()
   const modalRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false)
   useClickOutside({
     ref: modalRef,
     active: isOpen,
@@ -41,6 +43,7 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
       return;
     }
     setShowError(false);
+    setIsLoading(true)
     // Handle form submission here
     try {
       const newBoard = {
@@ -56,6 +59,8 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
     } catch (error) {
       message.error("Lỗi khi tạo bảng");
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -77,7 +82,7 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
   return (
     <>{isOpen && isOpen &&
       <div className="modal" ref={modalRef} style={{
-        left: '1%',
+        left: '105%',
       }}>
 
         <div className="modal-header">
@@ -191,7 +196,19 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
           </div>
         </div>
 
-        <div className='button-create' onClick={(e) => handleSubmit(e)}>Create</div>
+        <div
+          className={`button-create ${isLoading ? 'disabled' : ''}`}
+          onClick={(e) => {
+            if (!isLoading) handleSubmit(e);
+          }}
+        >
+          {isLoading ?
+            <>
+              <Spin className="loading-spin" />
+              <span>Loading</span>
+            </>
+            : 'Create'}
+        </div>
       </div>
     }
     </>
