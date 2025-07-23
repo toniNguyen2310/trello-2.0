@@ -6,8 +6,7 @@ import path from 'path'
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
-    alias: {
-      '@styles': path.resolve(__dirname, 'src/styles') // Thêm alias cho SCSS
+    alias: {// Thêm alias cho SCSS
     }
   }
 })
