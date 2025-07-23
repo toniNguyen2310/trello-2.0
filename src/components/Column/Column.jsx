@@ -22,10 +22,10 @@ const Column = ({
   const [cards, setCards] = useState(sortOrder(columnProps.cards, columnProps.cardOrder, 'id'))
   const cardsWrapperRef = useRef(null)
 
-  useEffect(() => {
-    setColumn(columnProps)
-    setCards(columnProps.cards)
-  }, [columnProps])
+  // useEffect(() => {
+  //   setColumn(columnProps)
+  //   setCards(columnProps.cards)
+  // }, [columnProps])
 
   //Handle Add New Card
   const handleAddCard = (cardText) => {
@@ -34,7 +34,8 @@ const Column = ({
       columnId: column.id,
       title: cardText,
       status: false,
-      description: ""
+      description: "",
+      checklist: []
     }
 
     setCards(prev => {

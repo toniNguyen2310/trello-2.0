@@ -34,7 +34,7 @@ function App() {
 
             <Route element={<NavbarOnlyLayout />}>
               <Route path="/board/:boardId" element={<Board />}>
-                <Route path="card/:id" element={<InforCard />} />
+                {/* <Route path="card/:id" element={<InforCard />} /> */}
               </Route>
             </Route>
 

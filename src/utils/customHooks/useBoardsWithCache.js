@@ -7,39 +7,31 @@ export const LS_KEY = 'cachedBoards'
 
 export const useBoardsWithCache = (userId) => {
     const [boards, setBoards] = useState([])
-    const [isLoading, setIsLoading] = useState(true) // 👈 Thêm loading
-
-    // Load từ localStorage
-    useEffect(() => {
-        const cached = localStorage.getItem(LS_KEY)
-        if (cached) {
-            try {
-                const parsed = JSON.parse(cached)
-                if (Array.isArray(parsed)) {
-                    setBoards(parsed)
-                }
-            } catch (err) {
-                console.error('Failed to parse cached boards', err)
-            }
-        }
-    }, [])
+    const [isLoading, setIsLoading] = useState(true)
 
     const fetchBoards = useCallback(async () => {
         if (!userId) return
-        setIsLoading(true)
-
         try {
-            const res = await getBoardsByUser(userId)
-            const newBoards = res.boards || []
-            const cachedBoards = JSON.parse(localStorage.getItem(LS_KEY) || '[]')
-
-            if (!isEqual(newBoards, cachedBoards)) {
-                setBoards(newBoards)
-                localStorage.setItem(LS_KEY, JSON.stringify(newBoards))
+            const cachedStr = localStorage.getItem(LS_KEY)
+            let cached = null
+            if (cachedStr) {
+                cached = JSON.parse(cachedStr)
+                if (Array.isArray(cached)) {
+                    setBoards(cached)
+                    setIsLoading(false)
+                }
             }
-        } catch (err) {
-            console.error('Không lấy được boards', err)
-        } finally {
+            const res = await getBoardsByUser(userId)
+            const fresh = res.boards || []
+
+            if (!cached || !isEqual(fresh, cached)) {
+                setBoards(fresh)
+                localStorage.setItem(LS_KEY, JSON.stringify(fresh))
+            }
+            if (!cached) setIsLoading(false)
+
+        } catch (error) {
+            console.error('Không lấy được boards:', error)
             setIsLoading(false)
         }
     }, [userId])

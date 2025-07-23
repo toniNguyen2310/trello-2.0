@@ -44,7 +44,7 @@ function Signup() {
             message.success("Đăng ký thành công!");
             navigate("/");
         } catch (err) {
-            console.log(err.message)
+            // console.log(err.message)
             const errMsg =
                 err?.message || "Đăng ký thất bại!";
             message.error(errMsg);

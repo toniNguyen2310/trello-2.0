@@ -7,12 +7,10 @@ import { deleteCardById, updateCardTitleById } from 'service/apis';
 
 
 const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst, distanceXFirst, listColumnsRef }) => {
-  const [cardTitle, setCardTitle] = useState(card.title)
+  const [cardDetail, setCardDetail] = useState(card)
   const [isEditing, setIsEditing] = useState(false)
   const wrapperRef = useRef(null)
-  useEffect(() => {
-    setCardTitle(card.title)
-  }, [card])
+
   //Handle Mouse Down
   const handleMouseDownCard = (e) => {
     const cardTarget = e.target
@@ -41,7 +39,8 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
       setIsEditing(false)
       return
     }
-    setCardTitle(newTitle)
+    setCardDetail({ ...cardDetail, title: newTitle })
+    // setCardTitle(newTitle)
     setIsEditing(false)
     const column = listColumnsRef.current.columns.find(col => col.id === card.columnId)
     if (!column) return
@@ -63,6 +62,13 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
     deleteCardById({ cardId: card.id })
   }
 
+  //Edit cardInfor
+  const saveNewCardInfor = ({ newTitle }) => {
+    if (newTitle === cardDetail.newTitle) {
+      setIsEditing(false)
+      return
+    }
+  }
 
 
   useEffect(() => {
@@ -97,7 +103,7 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
 
       >{!isEditing ? (
         <>
-          {cardTitle}
+          {cardDetail.title}
           < div
             className="edit-icon"
             onClick={(e) => {
@@ -112,16 +118,16 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
         (
           <CardEditForm
             card={card}
-            title={cardTitle}
+            title={cardDetail.title}
             onClose={() => setIsEditing(false)}
             onSave={handleSaveTitleCard}
             onDelete={handleDeleteCard}
+            cardDetail={cardDetail}
+            setCardDetail={setCardDetail}
+            listColumnsRef={listColumnsRef}
           />
         )}
       </div >
-
-
-
     </>
 
 

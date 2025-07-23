@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Popconfirm } from 'antd';
+import CardInfor from '@components/CardInfor/CardInfor';
 
-const CardEditForm = ({ card, title, onSave, onDelete }) => {
+const CardEditForm = ({ title, onSave, onDelete, cardDetail, setCardDetail, onClose, listColumnsRef }) => {
     const [value, setValue] = useState(title)
     const textareaRef = useRef(null)
-    const navigate = useNavigate();
+    const [openModal, setOpenModal] = useState(false)
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -23,6 +24,7 @@ const CardEditForm = ({ card, title, onSave, onDelete }) => {
         }
         onSave(trimmed)
     }
+
 
     return (
         <>
@@ -56,9 +58,26 @@ const CardEditForm = ({ card, title, onSave, onDelete }) => {
                     >
                         <div className='edit-actions-btn del-btn'>DELETE</div>
                     </Popconfirm>
-                    <button className="edit-actions-btn detail-btn" onClick={() => navigate(`card/${card.id}`)} >DETAIL</button>
+                    <button className="edit-actions-btn detail-btn" onClick={() => {
+                        setOpenModal(true)
+                    }} >
+                        DETAIL
+                    </button>
                 </div>
             </div >
+            {openModal && (
+                <CardInfor
+                    cardDetail={cardDetail}
+                    setCardDetail={setCardDetail}
+                    listColumnsRef={listColumnsRef}
+                    onClose={() => {
+                        setOpenModal(false)
+                        onClose()
+                    }}
+                />
+            )
+            }
+
         </>
 
     )

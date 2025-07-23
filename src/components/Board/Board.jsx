@@ -9,7 +9,6 @@ import { useColorVariants } from '@utils/customHooks/useColorVariants';
 import { useAuth } from '@contexts/AuthContext';
 import LoadingComponent from '@components/LoadingComponent/LoadingComponent ';
 import NotFound from '@components/Layout/NotFound';
-import { useLocation } from 'react-router-dom'
 
 function Board() {
     const { boardId } = useParams()
@@ -18,8 +17,7 @@ function Board() {
     const colorOb = useColorVariants(board?.color || '#f9f9f9')
     const { setAppBarColor } = useAuth()
     const listColumnsRef = useRef({})
-    const location = useLocation()
-    const navigate = useNavigate();
+
 
     const fetchBoard = useCallback(async () => {
         try {
@@ -31,6 +29,7 @@ function Board() {
                 cached = JSON.parse(cachedStr)
                 setBoard(cached)
                 listColumnsRef.current = cached
+                setLoading(false)
             }
 
             const fresh = await getBoardFullData(boardId)
@@ -40,33 +39,16 @@ function Board() {
                 listColumnsRef.current = fresh
                 localStorage.setItem(`trelloBoard-${boardId}`, JSON.stringify(fresh))
             }
+            if (!cached) setLoading(false)
+
         } catch (err) {
             console.error('Lỗi fetch board:', err)
-        } finally {
-            setLoading(false)
         }
     }, [boardId])
 
     useEffect(() => {
         if (boardId) fetchBoard()
     }, [boardId, fetchBoard])
-    const updateCardInBoard = (cardId, newData) => {
-        setBoard(prev => {
-            const newColumns = prev.columns.map(col => {
-                if (col.cards.some(card => card.id === cardId)) {
-                    const newCards = col.cards.map(card =>
-                        card.id === cardId ? { ...card, ...newData } : card
-                    )
-                    return { ...col, cards: newCards }
-                }
-                return col
-            })
-            const newBoard = { ...prev, columns: newColumns }
-            listColumnsRef.current = newBoard
-            return newBoard
-        })
-        console.log(listColumnsRef.current.columns)
-    };
 
     useEffect(() => {
         if (board) {

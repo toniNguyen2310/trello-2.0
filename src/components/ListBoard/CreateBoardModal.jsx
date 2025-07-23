@@ -9,6 +9,8 @@ import { createBoardAPI } from 'service/apis';
 import { useNavigate } from 'react-router-dom';
 import useClickOutside from '@utils/customHooks/useClickOutside';
 import { Spin } from 'antd';
+import { useUpdateBoardsCache } from '@utils/customHooks/useUpdateBoardsCache'
+
 
 const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
   const [selectedBackground, setSelectedBackground] = useState(0);
@@ -18,6 +20,8 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
   const { user } = useAuth()
   const modalRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false)
+  const { addBoardToCache } = useUpdateBoardsCache()
+
   useClickOutside({
     ref: modalRef,
     active: isOpen,
@@ -53,7 +57,7 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
       }
       const res = await createBoardAPI(newBoard);
       message.success("Tạo bảng thành công!");
-      console.log("Board created:", res);
+      addBoardToCache(res.board)
       resetForm();
       navigate(`/board/${res.board._id}`)
     } catch (error) {

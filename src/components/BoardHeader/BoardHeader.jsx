@@ -4,6 +4,7 @@ import { IoIosMore } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import { Popconfirm } from 'antd';
 import useClickOutside from '@utils/customHooks/useClickOutside';
+import { useUpdateBoardsCache } from '@utils/customHooks/useUpdateBoardsCache'
 
 const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
   const [boardName, setBoardName] = useState(board.title)
@@ -11,6 +12,7 @@ const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
   const [tempName, setTempName] = useState(boardName)
   const wrapperRef = useRef(null)
   const navigate = useNavigate()
+  const { removeBoardFromCache } = useUpdateBoardsCache()
 
   const handleUpdateBoardTitle = async () => {
     try {
@@ -35,6 +37,7 @@ const BoardHeader = ({ board, colorOb, listColumnsRef }) => {
         userId: board.ownerId
       }
       await deleteBoardById(dataDelete)
+      removeBoardFromCache(board._id)
       localStorage.removeItem(`trelloBoard-${board._id}`);
       navigate('/')
     } catch (err) {
