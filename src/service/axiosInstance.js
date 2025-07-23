@@ -2,8 +2,8 @@ import { passLocalStorage } from "@utils/passLocalStorage";
 import axios from "axios";
 
 // Base URL từ file `.env`
-// const baseURL = import.meta.env.VITE_BACKEND_URL;
-const baseURL = import.meta.env.VITE_BACKEND_URL_DEPLOY;
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 const instance = axios.create({
     baseURL: baseURL + "/api/",
 });
@@ -48,17 +48,7 @@ const setAccessToken = () => {
     }
 };
 
-// 🧊 Interceptor Request
-// instance.interceptors.request.use(
-//     async (config) => {
-//         setAccessToken();
-//         console.log('🚀 Request to:', config.url);
-//         console.log('👉 Authorization header:', config.headers.Authorization);
 
-//         return config;
-//     },
-//     (error) => Promise.reject(error)
-// );
 instance.interceptors.request.use(
     async (config) => {
         const accessToken = getUserInfo()?.accessToken;

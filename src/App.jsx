@@ -24,23 +24,23 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* <Route element={<ProtectedRoute />}> */}
+          <Route element={<ProtectedRoute />}>
 
-          <Route path="/" element={<FullLayout />}>
-            <Route index element={<ListBoard />} />
-            <Route path="/pomodoro" element={<Pomodoro />} />
-          </Route>
-
-
-          <Route element={<NavbarOnlyLayout />}>
-            <Route path="/board/:boardId" element={<Board />}>
-              <Route path="card/:id" element={<InforCard />} />
+            <Route path="/" element={<FullLayout />}>
+              <Route index element={<ListBoard />} />
+              <Route path="/pomodoro" element={<Pomodoro />} />
             </Route>
+
+
+            <Route element={<NavbarOnlyLayout />}>
+              <Route path="/board/:boardId" element={<Board />}>
+                <Route path="card/:id" element={<InforCard />} />
+              </Route>
+            </Route>
+
+            <Route path="/user/:userId" element={<User />} />
+
           </Route>
-
-          <Route path="/user/:userId" element={<User />} />
-
-          {/* </Route> */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />
