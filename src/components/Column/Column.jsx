@@ -22,6 +22,11 @@ const Column = ({
   const [cards, setCards] = useState(sortOrder(columnProps.cards, columnProps.cardOrder, 'id'))
   const cardsWrapperRef = useRef(null)
 
+  useEffect(() => {
+    setColumn(columnProps)
+    setCards(columnProps.cards)
+  }, [columnProps])
+
   //Handle Add New Card
   const handleAddCard = (cardText) => {
     let newCard = {
@@ -212,6 +217,7 @@ const Column = ({
             if (column.id === newSourceCol.id) {
               setCards([...newSourceCol.cards]);
               setColumn({ ...newSourceCol });
+              updateCardOrder(dataApi)
             }
           } else {
             if (column.id === sourceCol.id) {
@@ -221,10 +227,11 @@ const Column = ({
             else if (column.id === targetCol.id) {
               setCards([...newTargetCol.cards]);
               setColumn({ ...newTargetCol });
+              updateCardOrder(dataApi)
             }
           }
           localStorage.setItem(`trelloBoard-${column.boardId}`, JSON.stringify(listColumnsRef.current))
-          updateCardOrder(dataApi)
+
         }
       }
 
@@ -237,7 +244,6 @@ const Column = ({
     document.addEventListener("mouseup", handleMouseUpCard);
     return () => document.removeEventListener("mouseup", handleMouseUpCard);
   }, [])
-
 
   return (
     <div className="column " data-column-id={column.id}>

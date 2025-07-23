@@ -34,9 +34,13 @@ function Signup() {
         try {
             const res = await signupAPI(data);
             const { accessToken, refreshToken, user } = res;
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
-            signupContext(user);
+            const newInfo = {
+                user,
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+            };
+            signupContext(newInfo);
+            message.success("Đăng ký thành công!");
             navigate("/");
         } catch (err) {
             console.log(err.message)

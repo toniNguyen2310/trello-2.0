@@ -10,7 +10,9 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
   const [cardTitle, setCardTitle] = useState(card.title)
   const [isEditing, setIsEditing] = useState(false)
   const wrapperRef = useRef(null)
-
+  useEffect(() => {
+    setCardTitle(card.title)
+  }, [card])
   //Handle Mouse Down
   const handleMouseDownCard = (e) => {
     const cardTarget = e.target

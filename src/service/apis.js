@@ -1,4 +1,7 @@
+import axios from "axios";
 import axiosInstance from "./axiosInstance";
+import instance from "./axiosInstance";
+
 
 //AUTH
 export const loginAPI = (data) => {
@@ -13,8 +16,16 @@ export const signupAPI = (data) => {
 //BOARDS
 export const getBoardsByUser = async (userId) => {
     try {
+        // const user = JSON.parse(localStorage.getItem('user_info'));
+        // if (user?.accessToken) {
+
+        //     instance.defaults.headers.common["Authorization"] = `Bearer ${user.accessToken}`;
+        //     const res = await axiosInstance.get(`/boards/${userId}`);
+        //     return res;
+        // }
         const res = await axiosInstance.get(`/boards/${userId}`);
         return res;
+
     } catch (err) {
         console.error("Lỗi lấy boards:", err);
         throw err;

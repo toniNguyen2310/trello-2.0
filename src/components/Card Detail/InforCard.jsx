@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'
+import { useOutletContext, useParams } from 'react-router-dom'
 import { IoCloseSharp } from "react-icons/io5";
 import './InforCard.scss'
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import LoadingComponent from '@components/LoadingComponent/LoadingComponent ';
 const InforCard = () => {
     const { boardId, id } = useParams()
     const navigate = useNavigate();
+    const { fetchBoard } = useOutletContext();
     const [loading, setLoading] = useState(true);
     const [editableFields, setEditableFields] = useState({
         title: '',
@@ -27,10 +28,9 @@ const InforCard = () => {
 
     const closeModal = () => {
         navigate(`/board/${boardId}`);
-        setEditableFields(originalData);
     };
 
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         const hasChanges = !_.isEqual(editableFields, originalData);
 
         if (hasChanges) {
@@ -41,13 +41,14 @@ const InforCard = () => {
                     ...metaFields
                 }));
                 updateDetailCardById({ cardId: id, data: editableFields })
-                setOriginalData(editableFields); // cập nhật dữ liệu gốc
-                closeModal(); // tắt modal
+                fetchBoard()
+                setOriginalData(editableFields)
+                closeModal()
             } catch (err) {
                 console.error('Lỗi khi lưu card:', err);
             }
         } else {
-            closeModal();
+            closeModal()
         }
     };
 
@@ -57,7 +58,6 @@ const InforCard = () => {
             try {
                 const cachedCard = JSON.parse(localStorage.getItem(`card-${id}`) || 'null');
                 if (cachedCard && cachedCard.id) {
-                    console.log('cachedCard>> ', cachedCard)
                     setEditableFields({
                         title: cachedCard.title,
                         description: cachedCard.description,
@@ -76,7 +76,6 @@ const InforCard = () => {
                 }
 
                 const cardApi = await getCardDetail(id);
-                console.log(cardApi)
                 if (cardApi && !_.isEqual(cachedCard, cardApi)) {
                     setEditableFields({
                         title: cardApi.title,
@@ -97,7 +96,6 @@ const InforCard = () => {
                     localStorage.setItem(`card-${id}`, JSON.stringify(cardApi));
                 }
 
-                // 4. Nếu không có cả API và local thì quay về board
                 if (!cardApi && !cachedCard) {
                     navigate(`/board/${boardId}`);
                 }
@@ -113,6 +111,7 @@ const InforCard = () => {
 
         fetchCardDetail()
     }, [id, boardId, navigate])
+
 
     if (loading) {
         return (
@@ -156,7 +155,7 @@ const InforCard = () => {
                                 onChange={(e) => setEditableFields({ ...editableFields, description: e.target.value })}
                                 className="title-textarea"
                                 placeholder="Nhập gì đó...."
-                                rows="3"
+                                rows={3}
                             />
                         </div>
 
@@ -171,7 +170,7 @@ const InforCard = () => {
 
                     {/* FOOTER */}
                     <div className="modal-footer">
-                        <button onClick={closeModal} className="cancel-button">
+                        <button onClick={() => navigate(`/board/${boardId}`)} className="cancel-button">
                             Cancel
                         </button>
                         <button onClick={(e) => handleSave(e)} className="save-button">

@@ -26,9 +26,12 @@ const LoginForm = () => {
             const res = await loginAPI(data);
             if (res) {
                 const { accessToken, refreshToken, user } = res;
-                localStorage.setItem("accessToken", accessToken);
-                localStorage.setItem("refreshToken", refreshToken);
-                loginContext(user);
+                const newInfo = {
+                    user,
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                };
+                loginContext(newInfo);
                 message.success("Đăng nhập thành công!");
                 navigate("/");
             } else {
@@ -46,7 +49,7 @@ const LoginForm = () => {
         <div className="form-container">
             <form className="form-box" onSubmit={handleSubmit}>
                 <h1>Log In</h1>
-                <p className="subtitle">to start learning</p>
+                <p className="subtitle">To Trello</p>
 
                 <TextInput
                     label="Email"

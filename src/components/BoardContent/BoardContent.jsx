@@ -19,7 +19,6 @@ const BoardContent = ({ board, colorOb, listColumnsRef }) => {
     if (board?.columns && board?.columnOrder) {
       const sorted = sortOrder(board.columns, board.columnOrder, 'id')
       setColumns(sorted)
-      console.log('boardcontent >>> ', board)
     }
   }, [board])
 

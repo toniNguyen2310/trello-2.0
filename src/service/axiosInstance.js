@@ -1,14 +1,15 @@
+import { passLocalStorage } from "@utils/passLocalStorage";
 import axios from "axios";
 
 // Base URL từ file `.env`
-const baseURL = import.meta.env.VITE_BACKEND_URL;
-// const baseURL = import.meta.env.VITE_BACKEND_URL_DEPLOY;
+// const baseURL = import.meta.env.VITE_BACKEND_URL;
+const baseURL = import.meta.env.VITE_BACKEND_URL_DEPLOY;
 const instance = axios.create({
     baseURL: baseURL + "/api/",
 });
 
 // Tên key lưu user info trong localStorage
-const STORAGE_KEY = "user_info";
+export const STORAGE_KEY = "user_info";
 
 // Header để tránh retry lặp lại
 const NO_RETRY_HEADER = "x-no-retry";
@@ -27,25 +28,9 @@ const redirectToLogin = () => {
     window.location.href = "/login";
 };
 
-// 📦 Lấy thông tin user từ localStorage
-const getUserInfo = () => {
-    try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    } catch {
-        return {};
-    }
-};
-
-
-// 💾 Lưu lại thông tin user vào localStorage
-const setUserInfo = (data) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-};
-
-// ❌ Xoá thông tin user khi hết hạn token
-const clearUserInfo = () => {
-    localStorage.removeItem(STORAGE_KEY);
-};
+const getUserInfo = () => passLocalStorage.getItem(STORAGE_KEY);
+const setUserInfo = (data) => passLocalStorage.setItem(STORAGE_KEY, data);
+const clearUserInfo = () => passLocalStorage.removeItem(STORAGE_KEY);
 
 // 🔄 Gửi request refresh token
 const refreshToken = async () => {
@@ -57,15 +42,29 @@ const refreshToken = async () => {
 // 🔑 Gắn access token vào header
 const setAccessToken = () => {
     const accessToken = getUserInfo()?.accessToken;
+
     if (accessToken) {
         instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     }
 };
 
 // 🧊 Interceptor Request
+// instance.interceptors.request.use(
+//     async (config) => {
+//         setAccessToken();
+//         console.log('🚀 Request to:', config.url);
+//         console.log('👉 Authorization header:', config.headers.Authorization);
+
+//         return config;
+//     },
+//     (error) => Promise.reject(error)
+// );
 instance.interceptors.request.use(
     async (config) => {
-        setAccessToken();
+        const accessToken = getUserInfo()?.accessToken;
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`;
+        }
         return config;
     },
     (error) => Promise.reject(error)
@@ -87,6 +86,7 @@ instance.interceptors.response.use(
         ) {
             try {
                 const data = await refreshToken();
+
                 if (data?.accessToken && data?.refreshToken) {
                     // Lưu lại token mới
                     const newInfo = {
@@ -111,10 +111,11 @@ instance.interceptors.response.use(
         // ❌ Nếu refresh token cũng hết hạn
         if (
             error.response?.status === 400 &&
-            originalRequest?.url === "/auth/refresh"
+            originalRequest?.url === "/auth/refresh-token"
         ) {
             clearUserInfo();
             redirectToLogin();
+            return Promise.reject(error);
         }
 
         await delayIfLocal();

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getUserDetail } from 'service/apis'
 import { useEffect } from 'react'
 import { isEqual } from 'lodash'
+import LoadingComponent from '@components/LoadingComponent/LoadingComponent '
 
 function User() {
     const navigate = useNavigate()
@@ -12,23 +13,26 @@ function User() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            if (!user?._id) return
+            if (!userId || !user?._id) return
             try {
-                const userApi = await getUserDetail(userId)
-                console.log('userApi>> ', userApi)
-                // So sánh nếu khác thì cập nhật
-                if (!isEqual(user, userApi)) {
-                    setUser(userApi)
+                const fetchedUser = await getUserDetail(userId)
+                if (!isEqual(user, fetchedUser)) {
+                    setUser(fetchedUser)
                 }
             } catch (err) {
-                console.error('Lỗi fetch user detail:', err)
+                navigate('/not-found');
             }
         }
 
         fetchUser()
     }, [user?._id])
 
-    if (!user) return <div>Đang tải...</div>
+
+    if (!user) return <LoadingComponent />
+
+    const formattedDate = new Date(user.createdAt).toLocaleDateString('vi-VN', {
+        timeZone: 'Asia/Ho_Chi_Minh'
+    })
     return (
         <div className="User-container">
             <div className="User-container-modal">
@@ -46,9 +50,7 @@ function User() {
 
                 <div className="user-info">
                     <label>Thành viên từ</label>
-                    <p>{new Date(user?.createdAt).toLocaleDateString('vi-VN', {
-                        timeZone: 'Asia/Ho_Chi_Minh'
-                    })}</p>
+                    <p>{formattedDate}</p>
                 </div>
                 <div className="user-actions">
                     <button className="btn-secondary" onClick={() => navigate('/')}>Đóng</button>

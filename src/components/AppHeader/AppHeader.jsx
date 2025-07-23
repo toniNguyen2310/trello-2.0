@@ -19,16 +19,8 @@ const AppHeader = () => {
 
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    passLocalStorage.removeItem(LS_KEY);
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('trelloBoard-')) {
-        localStorage.removeItem(key);
-      }
-    });
     logoutContext();
-    navigate("/login");
+
   };
 
   const getFirstLetter = (name) => {
@@ -40,34 +32,17 @@ const AppHeader = () => {
   };
 
   useEffect(() => {
-
     if (!location.pathname.startsWith('/board')) {
-      setAppBarColor('#6b9ef6ff')
+      setAppBarColor('#1976d2')
     }
     // Nếu là /board thì màu sẽ được set bên trong Board.jsx
   }, [location.pathname])
 
-  // useEffect(() => {
-  //   const handleClickOutside = (e) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-  //       setIsOpen(false);
-  //     }
-  //   };
-  //   if (isOpen) {
-  //     document.addEventListener('mousedown', handleClickOutside);
-  //   }
-
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside);
-  //   };
-  // }, [isOpen]);
   useClickOutside({
     ref: dropdownRef,
     active: isOpen,
     callback: () => setIsOpen(false)
   })
-
-
 
   return (
     <div className="app-header" style={{

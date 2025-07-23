@@ -7,6 +7,7 @@ export const LS_KEY = 'cachedBoards'
 
 export const useBoardsWithCache = (userId) => {
     const [boards, setBoards] = useState([])
+    const [isLoading, setIsLoading] = useState(true) // 👈 Thêm loading
 
     // Load từ localStorage
     useEffect(() => {
@@ -25,6 +26,8 @@ export const useBoardsWithCache = (userId) => {
 
     const fetchBoards = useCallback(async () => {
         if (!userId) return
+        setIsLoading(true)
+
         try {
             const res = await getBoardsByUser(userId)
             const newBoards = res.boards || []
@@ -36,6 +39,8 @@ export const useBoardsWithCache = (userId) => {
             }
         } catch (err) {
             console.error('Không lấy được boards', err)
+        } finally {
+            setIsLoading(false)
         }
     }, [userId])
 
@@ -43,5 +48,5 @@ export const useBoardsWithCache = (userId) => {
         fetchBoards()
     }, [fetchBoards])
 
-    return boards
+    return { boards, isLoading }
 }

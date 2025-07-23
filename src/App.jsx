@@ -13,6 +13,9 @@ import ListBoard from "./components/ListBoard/ListBoard";
 import InforCard from "./components/Card Detail/InforCard";
 import Pomodoro from "./components/Pomodoro/Pomodoro";
 import User from "./components/User/User";
+import ProtectedRoute from "@components/routes/ProtectedRoute";
+import { useEffect } from "react";
+import axiosInstance from "./service/axiosInstance";
 
 
 
@@ -22,23 +25,25 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Các route có layout chung */}
-          <Route path="/" element={<FullLayout />}>
-            <Route index element={<ListBoard />} />
-            <Route path="/pomodoro" element={<Pomodoro />} />
-          </Route>
-
-          {/* Route chỉ có Navbar */}
-          <Route element={<NavbarOnlyLayout />}>
-            <Route path="/board/:boardId" element={<Board />}>
-              <Route path="card/:id" element={<InforCard />} />
+          <Route element={<ProtectedRoute />}>
+            {/* Các route có layout chung */}
+            <Route path="/" element={<FullLayout />}>
+              <Route index element={<ListBoard />} />
+              <Route path="/pomodoro" element={<Pomodoro />} />
             </Route>
-          </Route>
 
-          {/* Route không dùng layout */}
+            {/* Route chỉ có Navbar */}
+            <Route element={<NavbarOnlyLayout />}>
+              <Route path="/board/:boardId" element={<Board />}>
+                <Route path="card/:id" element={<InforCard />} />
+              </Route>
+            </Route>
+
+            <Route path="/user/:userId" element={<User />} />
+            {/* Route không dùng layout */}
+          </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/user/:userId" element={<User />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
