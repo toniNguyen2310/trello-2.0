@@ -4,13 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getUserDetail } from 'service/apis'
 import { useEffect, useState } from 'react'
 import { isEqual } from 'lodash'
-import LoadingComponent from '@components/LoadingComponent/LoadingComponent '
 
 function User() {
     const navigate = useNavigate()
     const { user, setUser } = useAuth()
     const { userId } = useParams()
-    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -22,20 +20,18 @@ function User() {
                 }
             } catch (err) {
                 navigate('/not-found');
-            } finally {
-                setLoading(false)
             }
         }
 
         fetchUser()
-    }, [user?._id])
+    }, [user?._id, userId])
 
-
-    if (loading) return <LoadingComponent />
+    if (!user) return <p>Không tìm thấy người dùng</p>
 
     const formattedDate = new Date(user.createdAt).toLocaleDateString('vi-VN', {
         timeZone: 'Asia/Ho_Chi_Minh'
     })
+
     return (
         <div className="User-container">
             <div className="User-container-modal">

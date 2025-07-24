@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import useClickOutside from '@utils/customHooks/useClickOutside';
 import { Spin } from 'antd';
 import { useUpdateBoardsCache } from '@utils/customHooks/useUpdateBoardsCache'
+import { PawPrint } from 'lucide-react';
 
 
 const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
@@ -82,12 +83,13 @@ const CreateBoardModal = ({ isOpen, setIsOpen, position }) => {
     setShowMoreColors(false);
   };
 
-
   return (
     <>{isOpen && isOpen &&
-      <div className="modal" ref={modalRef} style={{
-        left: '105%',
-      }}>
+      <div className="modal" ref={modalRef} style={
+        position === "left"
+          ? { left: '105%' }
+          : { right: '105%' }
+      }>
 
         <div className="modal-header">
           <h2 className="modal-title">Create board</h2>

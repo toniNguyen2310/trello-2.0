@@ -77,8 +77,8 @@ const Card = ({ card, cards, setCards, dragStartRef, cloneElRef, distanceYFirst,
       const isOutside = wrapperRef.current && !wrapperRef.current.contains(e.target)
       const isInPopconfirm = e.target.closest('.ant-popover-content');
       const isEditIcon = e.target.closest('.edit-icon');
-
-      if (isEditing && clickedCardId !== card.id && isOutside && !isInPopconfirm && !isEditIcon) {
+      const isAddCard = e.target.closest('.add-card')
+      if (isEditing && clickedCardId !== card.id && isOutside && !isInPopconfirm && !isEditIcon && !isAddCard) {
         setIsEditing(false)
       }
     }

@@ -1,31 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-export const useSmartPosition = (ref) => {
-    const [position, setPosition] = useState(''); // 'left' or 'right'
+export function useBoardCardWrapPosition(gridRef, wrapRef) {
+    const [position, setPosition] = useState(null)
 
     useEffect(() => {
         const updatePosition = () => {
-            if (!ref.current) return;
-            const rect = ref.current.getBoundingClientRect();
-            const screenWidth = window.innerWidth;
 
-            if (rect.left < screenWidth / 2) {
-                // console.log('R')
-                setPosition('right');
+            if (!gridRef.current || !wrapRef.current) return
+
+            const gridRect = gridRef.current.getBoundingClientRect()
+            const wrapRect = wrapRef.current.getBoundingClientRect()
+
+            const gridCenter = gridRect.left + gridRect.width / 2
+            const wrapCenter = wrapRect.left + wrapRect.width / 2
+
+            if (wrapCenter > gridCenter) {
+                setPosition('right')
             } else {
-                // console.log('L')
-
-                setPosition('left');
+                setPosition('left')
             }
-        };
+        }
 
-        updatePosition();
-        window.addEventListener('resize', updatePosition);
+        updatePosition()
+
+        // Lắng nghe resize để cập nhật lại
+        window.addEventListener('resize', updatePosition)
 
         return () => {
-            window.removeEventListener('resize', updatePosition);
-        };
-    }, []);
+            window.removeEventListener('resize', updatePosition)
+        }
+    }, [gridRef, wrapRef])
 
-    return position;
-};
+    return position
+}
